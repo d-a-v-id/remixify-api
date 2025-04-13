@@ -51,7 +51,10 @@ public class RecipeLikeController {
     @DeleteMapping("/{recipeId}/likes")
     public ResponseEntity<RecipeDto> unlikeRecipe(
             @PathVariable Long recipeId, @AuthenticationPrincipal User currentUser) {
-        log.debug("Request to unlike recipe with id: {}", recipeId);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         Optional<Recipe> recipeOpt = recipeService.getRecipeById(recipeId);
         if (recipeOpt.isEmpty()) {
@@ -60,10 +63,8 @@ public class RecipeLikeController {
         }
 
         Recipe recipe = recipeOpt.get();
-        recipe.unlike(currentUser);
-        recipeLikeService.unlikeRecipe(recipe, currentUser);
-        Recipe savedRecipe = recipeService.saveRecipe(recipe);
+        Recipe updatedRecipe = recipeLikeService.unlikeRecipe(recipe, currentUser);
 
-        return ResponseEntity.ok(RecipeDto.fromRecipe(savedRecipe, currentUser));
+        return ResponseEntity.ok(RecipeDto.fromRecipe(updatedRecipe, currentUser));
     }
 }

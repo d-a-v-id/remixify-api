@@ -92,13 +92,15 @@ public class Recipe {
     // ─────────────────────────────────────────────────────
 
     public void like(User user) {
-        likedByUsers.add(user);
-        likes = (long) likedByUsers.size();
+        this.likedByUsers.add(user);
+        user.getLikedRecipes().add(this);
+        this.likes = (long) this.likedByUsers.size();
     }
 
     public void unlike(User user) {
-        likedByUsers.remove(user);
-        likes = (long) likedByUsers.size();
+        this.likedByUsers.remove(user);
+        user.getLikedRecipes().remove(this);
+        this.likes = (long) this.likedByUsers.size();
     }
 
     public boolean isLikedBy(User user) {

@@ -109,7 +109,10 @@ public class RecipeController {
         }
 
         Recipe recipe = recipeOptional.get();
-        if (!recipe.getAuthor().getId().equals(currentUser.getId())) {
+        boolean isAdmin = currentUser.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (!recipe.getAuthor().getId().equals(currentUser.getId()) && !isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

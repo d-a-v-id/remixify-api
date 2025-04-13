@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.dvd.remixifyapi.auth.model.Token;
 import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.storage.util.FileStorageConstants;
@@ -47,7 +46,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = {"tokens", "likedRecipes", "password"})
+@ToString(exclude = {"likedRecipes", "password"})
 public class User implements UserDetails {
 
     // ─────────────────────────────────────────────────────
@@ -104,14 +103,6 @@ public class User implements UserDetails {
     // ─────────────────────────────────────────────────────
     // 📌 Relationships
     // ─────────────────────────────────────────────────────
-
-    @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @Builder.Default
-    private Set<Token> tokens = new HashSet<>();
 
     @OneToMany(
             mappedBy = "author",
