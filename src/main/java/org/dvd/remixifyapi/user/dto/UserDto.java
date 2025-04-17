@@ -1,5 +1,6 @@
 package org.dvd.remixifyapi.user.dto;
 
+import org.dvd.remixifyapi.storage.util.FileStorageConstants;
 import org.dvd.remixifyapi.user.model.User;
 
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class UserDto {
     private String username;
     private String email;
     private String avatarPath;
+    private int recipeCount;
 
     public static UserDto fromUser(User user) {
         return UserDto.builder()
@@ -22,7 +24,8 @@ public class UserDto {
                 .lastName(user.getLastName())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .avatarPath(user.getAvatarPath())
+                .avatarPath(FileStorageConstants.getAvatarUrl(user.getUsername()))
+                .recipeCount(user.getRecipes().size())
                 .build();
     }
 

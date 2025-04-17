@@ -1,13 +1,28 @@
 package org.dvd.remixifyapi.storage.util;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public interface FileStorageConstants {
-    String BASE_UPLOAD_DIR = "uploads";
-    String RECIPES_DIR = BASE_UPLOAD_DIR + "/recipes";
-    String AVATARS_DIR = BASE_UPLOAD_DIR + "/avatars";
-    String DEFAULT_AVATAR = "uploads/avatars/default_avatar.png";
-    
-    // URL paths for accessing the files
-    String UPLOAD_URL_PATH = "/uploads";
-    String RECIPES_URL_PATH = UPLOAD_URL_PATH + "/recipes";
-    String AVATARS_URL_PATH = UPLOAD_URL_PATH + "/avatars";
+    String RECIPES_PATH = "uploads/recipes";
+    String AVATARS_PATH = "uploads/avatars";
+    String DEFAULT_AVATAR_PATH = "uploads/avatars/default-avatar.webp";
+    String DEFAULT_RECIPE_PATH = "uploads/recipes/default-recipe.webp";
+
+
+    public static String getAvatarUrl(String username) {
+        String path = AVATARS_PATH + "/" + username + ".jpg";
+        if (!Files.exists(Path.of(path))) {
+            return DEFAULT_AVATAR_PATH;
+        }
+        return AVATARS_PATH + "/" + username + ".jpg";
+    }
+
+    public static String getRecipeUrl(String recipeId) {
+        String path = RECIPES_PATH + "/" + recipeId + ".jpg";
+        if (!Files.exists(Path.of(path))) {
+            return DEFAULT_RECIPE_PATH;
+        }
+        return RECIPES_PATH + "/" + recipeId + ".jpg";
+    }
 }

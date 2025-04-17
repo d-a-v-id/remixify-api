@@ -34,19 +34,19 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = {"likedRecipes", "password"})
 public class User implements UserDetails {
 
     // ─────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Long createdAt = System.currentTimeMillis();
 
-    @Builder.Default private String avatarPath = FileStorageConstants.DEFAULT_AVATAR;
+    @Builder.Default private String avatarPath = FileStorageConstants.DEFAULT_AVATAR_PATH;
 
     // ─────────────────────────────────────────────────────
     // 📌 Relationships

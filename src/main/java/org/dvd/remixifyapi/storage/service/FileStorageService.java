@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import org.dvd.remixifyapi.storage.util.FileStorageConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +33,23 @@ public class FileStorageService {
             return uploadDir + "/" + newFileName;
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + newFileName, ex);
+        }
+    }
+
+    public String storeAvatar(MultipartFile file, String username) {
+        String avatarPath = FileStorageConstants.getAvatarUrl(username);
+        try {
+            Path uploadPath = Path.of(FileStorageConstants.AVATARS_PATH);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path targetLocation = Path.of(avatarPath);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            
+            return avatarPath;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store avatar for user " + username, ex);
         }
     }
 

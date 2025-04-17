@@ -81,7 +81,6 @@ public class UserController {
     public ResponseEntity<Map<String, String>> updateProfilePicture(
             @PathVariable String username,
             @RequestParam("image") MultipartFile image) {
-
         try {
             if (image.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of(
@@ -89,16 +88,14 @@ public class UserController {
             }
 
             User user = userService.getUser(username);
-
-            String avatarPath = fileStorageService.storeFile(image, FileStorageConstants.AVATARS_DIR);
-
+            String avatarPath = fileStorageService.storeAvatar(image, username);
             user.setAvatarPath(avatarPath);
             userService.saveUser(user);
 
             return ResponseEntity.ok(Map.of(
                     "message", "Profile picture updated successfully",
                     "username", username,
-                    "avatarPath", avatarPath));
+                    "avatarUrl", FileStorageConstants.getAvatarUrl(username)));
         } catch (Exception e) {
             log.error("Error updating profile picture: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

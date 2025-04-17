@@ -1,6 +1,5 @@
 package org.dvd.remixifyapi.recipe.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.dvd.remixifyapi.recipe.model.Recipe;
@@ -21,9 +20,11 @@ public class RecipeLikeService {
 
     @Transactional
     public Recipe likeRecipe(Recipe recipe, User user) {
-        User freshUser = userRepository.findById(user.getId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-            
+        User freshUser =
+                userRepository
+                        .findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
         if (!recipe.getLikedByUsers().contains(freshUser)) {
             recipe.getLikedByUsers().add(freshUser);
             freshUser.getLikedRecipes().add(recipe);
@@ -34,8 +35,10 @@ public class RecipeLikeService {
 
     @Transactional
     public Recipe unlikeRecipe(Recipe recipe, User user) {
-        User freshUser = userRepository.findById(user.getId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        User freshUser =
+                userRepository
+                        .findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (recipe.getLikedByUsers().contains(freshUser)) {
             recipe.getLikedByUsers().remove(freshUser);
@@ -45,7 +48,8 @@ public class RecipeLikeService {
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> getLikedRecipesByUser(User currentUser) {
-        return new ArrayList<>(currentUser.getLikedRecipes());
+    @Transactional(readOnly = true)
+    public List<Recipe> getLikedRecipesByUser(User user) {
+        return recipeRepository.findRecipesLikedByUserId(user.getId());
     }
 }

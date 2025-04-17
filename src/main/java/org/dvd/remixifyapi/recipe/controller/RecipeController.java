@@ -54,7 +54,7 @@ public class RecipeController {
         return ResponseEntity.ok(
                 recipes.stream()
                         .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
-                        .collect(Collectors.toList()));
+                        .toList());
     }
 
     @GetMapping("/ingredients")
@@ -170,7 +170,7 @@ public class RecipeController {
             // Handle image upload if present
             if (image != null && !image.isEmpty()) {
                 String imagePath =
-                        fileStorageService.storeFile(image, FileStorageConstants.RECIPES_DIR);
+                        fileStorageService.storeFile(image, FileStorageConstants.RECIPES_PATH);
                 recipe.setImagePath(imagePath);
             }
 
