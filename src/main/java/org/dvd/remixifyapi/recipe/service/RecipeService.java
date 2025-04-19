@@ -7,6 +7,7 @@ import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,9 +34,20 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
+    @Transactional
     public void deleteRecipe(Recipe recipe) {
-        recipeRepository.deleteById(recipe.getId());
+        recipe.getLikedByUsers().forEach(user -> {
+            user.getLikedRecipes().remove(recipe);
+        });
+        recipe.getLikedByUsers().clear();
+        
+        recipe.getRecipeIngredients().clear();
+        
+        recipeRepository.save(recipe);
+        
+        recipeRepository.delete(recipe);
     }
+
 
     public List<String> getAllIngredients() {
         return ingredientRepository.findAll().stream()
