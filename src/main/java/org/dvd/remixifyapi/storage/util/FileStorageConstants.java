@@ -10,7 +10,7 @@ public interface FileStorageConstants {
     String DEFAULT_RECIPE_PATH = "uploads/recipes/default-recipe.webp";
 
 
-    public static String getAvatarUrl(String username) {
+    public static String getAvatarImageUrl(String username) {
         String path = AVATARS_PATH + "/" + username + ".jpg";
         if (!Files.exists(Path.of(path))) {
             return DEFAULT_AVATAR_PATH;
@@ -18,7 +18,7 @@ public interface FileStorageConstants {
         return AVATARS_PATH + "/" + username + ".jpg";
     }
 
-    public static String getRecipeUrl(String recipeId) {
+    public static String getRecipeImageUrl(String recipeId) {
         String path = RECIPES_PATH + "/" + recipeId + ".jpg";
         if (!Files.exists(Path.of(path))) {
             return DEFAULT_RECIPE_PATH;

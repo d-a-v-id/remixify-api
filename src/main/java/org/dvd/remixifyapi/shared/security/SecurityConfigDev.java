@@ -44,6 +44,8 @@ public class SecurityConfigDev {
                                         .permitAll()
                                         .requestMatchers("/api/users/**")
                                         .permitAll()
+                                        .requestMatchers("/api/files/**")
+                                        .permitAll()
                                         .requestMatchers(
                                                 "/swagger-ui/**",
                                                 "/v3/api-docs/**",

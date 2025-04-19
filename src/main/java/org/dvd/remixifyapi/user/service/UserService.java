@@ -70,4 +70,10 @@ public class UserService {
 
         saveUser(existingUser);
     }
+
+    public void updateUserAvatarPath(String username, String avatarPath) {
+        User user = getUser(username);
+        user.setAvatarPath(avatarPath);
+        saveUser(user);
+    }
 }

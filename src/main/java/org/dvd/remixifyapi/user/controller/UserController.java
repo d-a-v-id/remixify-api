@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dvd.remixifyapi.storage.service.FileStorageService;
-import org.dvd.remixifyapi.storage.util.FileStorageConstants;
 import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.service.UserService;
@@ -37,9 +36,7 @@ public class UserController {
     @GetMapping
     public List<UserDto> getUsers() {
         List<User> users = userService.getAllUsers();
-        return users.stream()
-                .map(UserDto::fromUser)
-                .toList();
+        return users.stream().map(UserDto::fromUser).toList();
     }
 
     @GetMapping("/{username}")
@@ -52,50 +49,47 @@ public class UserController {
     public ResponseEntity<Map<String, String>> createUser(@Valid @RequestBody User user) {
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of(
-                        "message", "User created successfully",
-                        "username", user.getUsername()));
+                .body(
+                        Map.of(
+                                "message",
+                                "User created successfully",
+                                "username",
+                                user.getUsername()));
     }
 
     @PatchMapping("/{username}")
     public ResponseEntity<Map<String, String>> updateUser(
-            @PathVariable String username,
-            @RequestBody UserDto userDto) {
+            @PathVariable String username, @RequestBody UserDto userDto) {
 
         userService.updateUser(username, userDto);
 
-        return ResponseEntity.ok(Map.of(
-                "message", "User updated successfully",
-                "username", username));
+        return ResponseEntity.ok(
+                Map.of("message", "User updated successfully", "username", username));
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
-        return ResponseEntity.ok(Map.of(
-                "message", "User deleted successfully",
-                "username", username));
+        return ResponseEntity.ok(
+                Map.of("message", "User deleted successfully", "username", username));
     }
 
     @PostMapping("/{username}/avatar")
     public ResponseEntity<Map<String, String>> updateProfilePicture(
-            @PathVariable String username,
-            @RequestParam("image") MultipartFile image) {
+            @PathVariable String username, @RequestParam("image") MultipartFile image) {
         try {
             if (image.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "message", "Please upload an image file"));
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Please upload an image file"));
             }
 
-            User user = userService.getUser(username);
             String avatarPath = fileStorageService.storeAvatar(image, username);
-            user.setAvatarPath(avatarPath);
-            userService.saveUser(user);
 
-            return ResponseEntity.ok(Map.of(
-                    "message", "Profile picture updated successfully",
-                    "username", username,
-                    "avatarUrl", FileStorageConstants.getAvatarUrl(username)));
+            return ResponseEntity.ok(
+                    Map.of(
+                            "message", "Profile picture updated successfully",
+                            "username", username,
+                            "avatarPath", avatarPath));
         } catch (Exception e) {
             log.error("Error updating profile picture: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

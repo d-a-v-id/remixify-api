@@ -44,7 +44,7 @@ public class DatabaseInitConfig {
 
         User midudev =
                 User.builder()
-                        .firstName("Miguel Ángel")
+                        .firstName("Miguel A.")
                         .lastName("Durán")
                         .username("midudev")
                         .email("midudev@mail.com")
