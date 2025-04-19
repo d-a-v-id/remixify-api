@@ -64,6 +64,7 @@ public class RecipeService {
         recipeRepository.delete(recipe);
     }
 
+
     public List<String> getAllIngredients() {
         return ingredientRepository.findAll().stream()
                 .map(ingredient -> ingredient.getName())
