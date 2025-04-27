@@ -2,7 +2,12 @@ package org.dvd.remixifyapi.user.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
+import org.dvd.remixifyapi.recipe.dto.RecipeDto;
+import org.dvd.remixifyapi.recipe.model.Recipe;
+import org.dvd.remixifyapi.recommendation.RecommendationService;
+import org.dvd.remixifyapi.recommendation.dto.RecommendationResponse;
 import org.dvd.remixifyapi.storage.service.FileStorageService;
 import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
@@ -32,6 +37,7 @@ public class UserController {
 
     private final FileStorageService fileStorageService;
     private final UserService userService;
+    private final RecommendationService recommendationService;
 
     @GetMapping
     public List<UserDto> getUsers() {
@@ -72,6 +78,26 @@ public class UserController {
         userService.deleteUser(username);
         return ResponseEntity.ok(
                 Map.of("message", "User deleted successfully", "username", username));
+    }
+
+    @GetMapping("/{username}/likes")
+    public ResponseEntity<List<RecipeDto>> getUserLikedRecipes(@PathVariable String username) {
+        try {
+            List<Recipe> likedRecipes = userService.getLikedRecipesByUsername(username);
+            return ResponseEntity.ok(likedRecipes.stream()
+                    .map(RecipeDto::fromRecipe)
+                    .toList());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{username}/recommendations")
+    public ResponseEntity<RecommendationResponse> recommend(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "5") int limit) {
+        RecommendationResponse response = recommendationService.recommend(username, limit);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{username}/avatar")

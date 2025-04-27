@@ -4,9 +4,11 @@ import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Recipe;
-import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
-import org.dvd.remixifyapi.recipe.service.RecipeService;
 import org.dvd.remixifyapi.user.model.User;
+
+
+import org.dvd.remixifyapi.recipe.service.RecipeService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RecipeLikeController {
 
     private final RecipeService recipeService;
-    private final RecipeLikeService recipeLikeService;
+    private final org.dvd.remixifyapi.user.repository.UserRepository userRepository;
 
     @PostMapping("/{recipeId}/likes")
     public ResponseEntity<RecipeDto> likeRecipe(
@@ -43,28 +45,30 @@ public class RecipeLikeController {
         }
 
         Recipe recipe = recipeOpt.get();
-        Recipe updatedRecipe = recipeLikeService.likeRecipe(recipe, currentUser);
-
-        return ResponseEntity.ok(RecipeDto.fromRecipe(updatedRecipe, currentUser));
+        currentUser.getLikedRecipes().add(recipe);
+        userRepository.save(currentUser);
+        return ResponseEntity.ok(RecipeDto.fromRecipe(recipe, currentUser));
     }
 
     @DeleteMapping("/{recipeId}/likes")
-    public ResponseEntity<RecipeDto> unlikeRecipe(
-            @PathVariable Long recipeId, @AuthenticationPrincipal User currentUser) {
-
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<Void> unlikeRecipe(
+            @PathVariable Long recipeId,
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
+        Optional<User> userOpt = userRepository.findByUsername(principal.getUsername());
+        if (userOpt.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        User currentUser = userOpt.get();
 
         Optional<Recipe> recipeOpt = recipeService.getRecipeById(recipeId);
         if (recipeOpt.isEmpty()) {
-            log.warn("Recipe with id {} not found", recipeId);
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Recipe recipe = recipeOpt.get();
-        Recipe updatedRecipe = recipeLikeService.unlikeRecipe(recipe, currentUser);
+        currentUser.getLikedRecipes().remove(recipe);
+        userRepository.save(currentUser);
 
-        return ResponseEntity.ok(RecipeDto.fromRecipe(updatedRecipe, currentUser));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

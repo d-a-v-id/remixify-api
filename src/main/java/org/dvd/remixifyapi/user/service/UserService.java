@@ -1,8 +1,12 @@
 package org.dvd.remixifyapi.user.service;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.dvd.remixifyapi.user.dto.UserDto;
+import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +18,6 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
 
     public List<User> getAllUsers() {
@@ -54,7 +57,6 @@ public class UserService {
     public void updateUser(String username, UserDto userDto) {
         User existingUser = getUser(username);
 
-        // Update only non-null fields
         if (userDto.getFirstName() != null) {
             existingUser.setFirstName(userDto.getFirstName());
         }
@@ -75,5 +77,14 @@ public class UserService {
         User user = getUser(username);
         user.setAvatarPath(avatarPath);
         saveUser(user);
+    }
+
+    public List<Recipe> getLikedRecipesByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
+            throw new NoSuchElementException("User not found");
+        }
+        User user = userOpt.get();
+        return new ArrayList<>(user.getLikedRecipes());
     }
 }

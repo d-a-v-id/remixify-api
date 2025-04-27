@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+    @Query("SELECT DISTINCT r FROM Recipe r LEFT JOIN FETCH r.recipeIngredients ri LEFT JOIN FETCH ri.ingredient")
+    List<Recipe> findAllWithIngredients();
+    
     @Query("SELECT r FROM Recipe r JOIN FETCH r.likedByUsers u WHERE u.id = :userId")
     List<Recipe> findRecipesLikedByUserId(@Param("userId") Long userId);
 }
