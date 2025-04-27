@@ -12,6 +12,7 @@ app:
     enabled: true # if true, emails will be sent. Otherwise, they will be logged
     apiKey: ${EMAIL_API_KEY}
     from: Remixify <noreply@resend.dev>
+  base-url: http://172.26.179.106:8081
 
 
 spring:

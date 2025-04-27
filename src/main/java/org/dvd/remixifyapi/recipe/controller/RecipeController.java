@@ -13,7 +13,7 @@ import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.recipe.service.RecipeService;
 import org.dvd.remixifyapi.storage.service.FileStorageService;
-import org.dvd.remixifyapi.storage.util.FileStorageConstants;
+import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -170,7 +170,7 @@ public class RecipeController {
             // Handle image upload if present
             if (image != null && !image.isEmpty()) {
                 String imagePath =
-                        fileStorageService.storeFile(image, FileStorageConstants.RECIPES_PATH);
+                        fileStorageService.storeFile(image, FileStorageUtils.RECIPES_PATH);
                 recipe.setImagePath(imagePath);
             }
 

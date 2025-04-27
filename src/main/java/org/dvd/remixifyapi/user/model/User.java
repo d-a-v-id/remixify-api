@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
-import org.dvd.remixifyapi.storage.util.FileStorageConstants;
+import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,9 +43,9 @@ import lombok.Setter;
 @Table(name = "users")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
@@ -98,7 +98,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Long createdAt = System.currentTimeMillis();
 
-    @Builder.Default private String avatarPath = FileStorageConstants.DEFAULT_AVATAR_PATH;
+    @Builder.Default private String avatarPath = FileStorageUtils.DEFAULT_AVATAR_PATH;
 
     // ─────────────────────────────────────────────────────
     // 📌 Relationships

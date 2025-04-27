@@ -7,6 +7,7 @@ import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.model.RecipeIngredient;
 import org.dvd.remixifyapi.recipe.model.RecipeIngredient.Unit;
+import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
 
@@ -51,7 +52,7 @@ public class RecipeDto {
                 .id(recipe.getId())
                 .name(recipe.getName())
                 .description(recipe.getDescription())
-                .imagePath(recipe.getImagePath())
+                .imagePath(FileStorageUtils.getFullRecipeImageUrl(recipe.getImagePath()))
                 .author(UserDto.fromUser(recipe.getAuthor()))
                 .ingredients(recipe.getRecipeIngredients().stream()
                         .map(e -> IngredientDto.builder()
@@ -76,7 +77,7 @@ public class RecipeDto {
                 .id(recipe.getId())
                 .name(recipe.getName())
                 .description(recipe.getDescription())
-                .imagePath(recipe.getImagePath())
+                .imagePath(FileStorageUtils.getFullRecipeImageUrl(recipe.getImagePath()))
                 .author(UserDto.fromUser(recipe.getAuthor()))
                 .ingredients(recipe.getRecipeIngredients().stream()
                         .map(e -> IngredientDto.builder()
