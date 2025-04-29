@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -120,17 +121,16 @@ public class RecipeController {
         return ResponseEntity.noContent().build();
     }
 
+    @Transactional
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RecipeDto> createRecipe(
             @RequestPart("recipe") String recipeJson,
             @AuthenticationPrincipal User currentUser,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            // Parse JSON into our DTO
             ObjectMapper objectMapper = new ObjectMapper();
             RecipeDto recipeRequest = objectMapper.readValue(recipeJson, RecipeDto.class);
 
-            // Create the recipe entity
             Recipe recipe =
                     Recipe.builder()
                             .name(recipeRequest.getName())
@@ -147,13 +147,11 @@ public class RecipeController {
                             .likes(0L)
                             .build();
 
-            // Add ingredients to the recipe
             List<RecipeIngredient> ingredients = new ArrayList<>();
             for (RecipeDto.IngredientDto ingredientDto : recipeRequest.getIngredients()) {
                 RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
 
-                // Use the IngredientRepository to find the ingredient by ID
                 Optional<Ingredient> ingredientOpt =
                         ingredientRepository.findById(ingredientDto.getId());
                 if (ingredientOpt.isEmpty()) {
@@ -167,14 +165,12 @@ public class RecipeController {
             }
             recipe.setRecipeIngredients(ingredients);
 
-            // Handle image upload if present
             if (image != null && !image.isEmpty()) {
                 String imagePath =
                         fileStorageService.storeFile(image, FileStorageUtils.RECIPES_PATH);
                 recipe.setImagePath(imagePath);
             }
 
-            // Save the recipe
             Recipe savedRecipe = recipeService.saveRecipe(recipe);
 
             return ResponseEntity.status(HttpStatus.CREATED)

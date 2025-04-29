@@ -1,12 +1,12 @@
 package org.dvd.remixifyapi.user.service;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.recipe.model.Recipe;
+import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
