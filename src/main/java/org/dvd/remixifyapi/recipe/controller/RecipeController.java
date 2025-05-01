@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
+import org.dvd.remixifyapi.recipe.model.Recipe.Label;
 import org.dvd.remixifyapi.recipe.model.RecipeIngredient;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -200,5 +202,36 @@ public class RecipeController {
                         .collect(Collectors.toList());
 
         return ResponseEntity.ok(likedRecipesDto);
+    }
+
+    @GetMapping("/category/{label}")
+    public ResponseEntity<List<RecipeDto>> getRecipesByLabel(
+            @PathVariable String label,
+            @RequestParam(defaultValue = "10") int limit) {
+        try {
+            Label recipeLabel = Label.valueOf(label.toUpperCase());
+            List<Recipe> recipes = recipeService.getRecipesByLabel(recipeLabel, limit);
+            
+            List<RecipeDto> recipeDtos = recipes.stream()
+                    .map(recipe -> RecipeDto.fromRecipe(recipe))
+                    .toList();
+            
+            return ResponseEntity.ok(recipeDtos);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid recipe label: {}", label);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/most-liked")
+    public ResponseEntity<List<RecipeDto>> getMostLikedRecipes(
+            @RequestParam(defaultValue = "10") int limit) {
+        List<Recipe> recipes = recipeService.getMostLikedRecipes(limit);
+        
+        List<RecipeDto> recipeDtos = recipes.stream()
+                .map(recipe -> RecipeDto.fromRecipe(recipe))
+                .toList();
+        
+        return ResponseEntity.ok(recipeDtos);
     }
 }

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.model.Recipe;
+import org.dvd.remixifyapi.recipe.model.Recipe.Label;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.repository.RecipeRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,10 +50,17 @@ public class RecipeService {
         recipeRepository.delete(recipe);
     }
 
-
     public List<String> getAllIngredients() {
         return ingredientRepository.findAll().stream()
                 .map(ingredient -> ingredient.getName())
                 .toList();
+    }
+
+    public List<Recipe> getRecipesByLabel(Label label, int limit) {
+        return recipeRepository.findByLabel(label, PageRequest.of(0, limit)).getContent();
+    }
+
+    public List<Recipe> getMostLikedRecipes(int limit) {
+        return recipeRepository.findByOrderByLikesDesc(PageRequest.of(0, limit)).getContent();
     }
 }
