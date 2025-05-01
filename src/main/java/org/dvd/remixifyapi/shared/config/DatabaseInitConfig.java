@@ -19,7 +19,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@Profile("dev")
+@Profile({"dev", "pro"})
 @RequiredArgsConstructor
 public class DatabaseInitConfig {
 
