@@ -55,13 +55,18 @@ public class RecipeController {
 
     @GetMapping
     public ResponseEntity<PaginatedRecipeResponse> getAllRecipes(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size,
             @RequestParam(required = false) String filter,
             @RequestParam(required = false) List<String> ingredients,
             @AuthenticationPrincipal User currentUser) {
+        int zeroBasedPage = page - 1;
+        if (zeroBasedPage < 0) {
+            zeroBasedPage = 0;
+        }
+        
         Page<Recipe> recipes = recipeService.getAllRecipes(
-                PageRequest.of(page, size),
+                PageRequest.of(zeroBasedPage, size),
                 filter,
                 ingredients);
         
@@ -72,7 +77,7 @@ public class RecipeController {
         PaginatedRecipeResponse response = PaginatedRecipeResponse.builder()
                 .content(recipeDtos)
                 .totalPages(recipes.getTotalPages())
-                .currentPage(recipes.getNumber())
+                .currentPage(page)
                 .totalItems(recipes.getTotalElements())
                 .build();
 
