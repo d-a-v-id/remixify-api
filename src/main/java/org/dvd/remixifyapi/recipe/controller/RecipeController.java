@@ -225,11 +225,12 @@ public class RecipeController {
 
     @GetMapping("/most-liked")
     public ResponseEntity<List<RecipeDto>> getMostLikedRecipes(
-            @RequestParam(defaultValue = "10") int limit) {
+            @RequestParam(defaultValue = "10") int limit,
+            @AuthenticationPrincipal User currentUser) {
         List<Recipe> recipes = recipeService.getMostLikedRecipes(limit);
         
         List<RecipeDto> recipeDtos = recipes.stream()
-                .map(recipe -> RecipeDto.fromRecipe(recipe))
+                .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
                 .toList();
         
         return ResponseEntity.ok(recipeDtos);

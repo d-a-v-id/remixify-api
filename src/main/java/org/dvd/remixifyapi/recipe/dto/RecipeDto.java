@@ -1,7 +1,6 @@
 package org.dvd.remixifyapi.recipe.dto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
@@ -19,6 +18,7 @@ public class RecipeDto {
     private String imagePath;
     private RecipeUserDto author;
     private String label;
+    private String labelDescription;
     private List<String> steps;
     private List<IngredientDto> ingredients;
     private Long cookTime;
@@ -48,6 +48,7 @@ public class RecipeDto {
                 .imagePath(FileStorageUtils.getFullRecipeImageUrl(recipe.getImagePath()))
                 .author(RecipeUserDto.fromUser(recipe.getAuthor()))
                 .label(recipe.getLabel() != null ? recipe.getLabel().name() : null)
+                .labelDescription(recipe.getLabel() != null ? recipe.getLabel().getDescription() : null)
                 .steps(recipe.getSteps())
                 .ingredients(recipe.getRecipeIngredients().stream()
                         .map(ri -> IngredientDto.builder()
