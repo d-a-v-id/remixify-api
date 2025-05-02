@@ -24,5 +24,5 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Page<Recipe> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     @Query("SELECT DISTINCT r FROM Recipe r JOIN r.recipeIngredients ri JOIN ri.ingredient i WHERE LOWER(i.name) IN :ingredients")
-    Page<Recipe> findByRecipeIngredients_Ingredient_NameIn(@Param("ingredients") List<String> ingredients, Pageable pageable);
+    Page<Recipe> findByRecipeIngredients(@Param("ingredients") List<String> ingredients, Pageable pageable);
 }

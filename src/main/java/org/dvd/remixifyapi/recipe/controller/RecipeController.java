@@ -57,7 +57,7 @@ public class RecipeController {
     public ResponseEntity<PaginatedRecipeResponse> getAllRecipes(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size,
-            @RequestParam(required = false) String filter,
+            @RequestParam(required = false) String label,
             @RequestParam(required = false) List<String> ingredients,
             @AuthenticationPrincipal User currentUser) {
         int zeroBasedPage = page - 1;
@@ -67,7 +67,7 @@ public class RecipeController {
         
         Page<Recipe> recipes = recipeService.getAllRecipes(
                 PageRequest.of(zeroBasedPage, size),
-                filter,
+                label,
                 ingredients);
         
         List<RecipeDto> recipeDtos = recipes.getContent().stream()

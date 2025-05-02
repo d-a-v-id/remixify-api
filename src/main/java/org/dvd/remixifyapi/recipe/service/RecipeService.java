@@ -22,15 +22,15 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
 
-    public Page<Recipe> getAllRecipes(Pageable pageable, String filter, List<String> ingredients) {
-        if (filter != null && !filter.isEmpty()) {
-            return recipeRepository.findByNameContainingIgnoreCase(filter, pageable);
+    public Page<Recipe> getAllRecipes(Pageable pageable, String label, List<String> ingredients) {
+        if (label != null && !label.isEmpty()) {
+            return recipeRepository.findByLabel(Label.valueOf(label.toUpperCase()), pageable);
         }
         if (ingredients != null && !ingredients.isEmpty()) {
             List<String> lowercaseIngredients = ingredients.stream()
                     .map(String::toLowerCase)
                     .toList();
-            return recipeRepository.findByRecipeIngredients_Ingredient_NameIn(lowercaseIngredients, pageable);
+            return recipeRepository.findByRecipeIngredients(lowercaseIngredients, pageable);
         }
         return recipeRepository.findAll(pageable);
     }
