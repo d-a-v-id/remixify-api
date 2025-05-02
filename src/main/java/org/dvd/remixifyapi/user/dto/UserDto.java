@@ -2,7 +2,6 @@ package org.dvd.remixifyapi.user.dto;
 
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
-import org.hibernate.Hibernate;
 
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +25,7 @@ public class UserDto {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .avatarPath(FileStorageUtils.getFullAvatarImageUrl(user.getAvatarPath()))
-                .recipeCount(
-                        Hibernate.isInitialized(user.getRecipes()) ? user.getRecipes().size() : 0)
+                .recipeCount(user.getRecipes().size())
                 .build();
     }
 

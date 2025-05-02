@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.dvd.remixifyapi.recipe.dto.PaginatedRecipeResponse;
 import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
@@ -16,6 +17,8 @@ import org.dvd.remixifyapi.recipe.service.RecipeService;
 import org.dvd.remixifyapi.storage.service.FileStorageService;
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,13 +54,29 @@ public class RecipeController {
     private final RecipeLikeService recipeLikeService;
 
     @GetMapping
-    public ResponseEntity<List<RecipeDto>> getAllRecipes(
+    public ResponseEntity<PaginatedRecipeResponse> getAllRecipes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(required = false) String filter,
+            @RequestParam(required = false) List<String> ingredients,
             @AuthenticationPrincipal User currentUser) {
-        List<Recipe> recipes = recipeService.getAllRecipes();
-        return ResponseEntity.ok(
-                recipes.stream()
-                        .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
-                        .toList());
+        Page<Recipe> recipes = recipeService.getAllRecipes(
+                PageRequest.of(page, size),
+                filter,
+                ingredients);
+        
+        List<RecipeDto> recipeDtos = recipes.getContent().stream()
+                .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
+                .toList();
+
+        PaginatedRecipeResponse response = PaginatedRecipeResponse.builder()
+                .content(recipeDtos)
+                .totalPages(recipes.getTotalPages())
+                .currentPage(recipes.getNumber())
+                .totalItems(recipes.getTotalElements())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/ingredients")

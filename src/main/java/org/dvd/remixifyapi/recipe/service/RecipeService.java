@@ -7,7 +7,9 @@ import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.model.Recipe.Label;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.repository.RecipeRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +22,17 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
 
-    public List<Recipe> getAllRecipes() {
-        return recipeRepository.findAll();
+    public Page<Recipe> getAllRecipes(Pageable pageable, String filter, List<String> ingredients) {
+        if (filter != null && !filter.isEmpty()) {
+            return recipeRepository.findByNameContainingIgnoreCase(filter, pageable);
+        }
+        if (ingredients != null && !ingredients.isEmpty()) {
+            List<String> lowercaseIngredients = ingredients.stream()
+                    .map(String::toLowerCase)
+                    .toList();
+            return recipeRepository.findByRecipeIngredients_Ingredient_NameIn(lowercaseIngredients, pageable);
+        }
+        return recipeRepository.findAll(pageable);
     }
 
     public Optional<Recipe> getRecipeById(Long id) {
