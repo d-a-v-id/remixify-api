@@ -4,11 +4,9 @@ import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Recipe;
-import org.dvd.remixifyapi.user.model.User;
-
-
+import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.recipe.service.RecipeService;
-
+import org.dvd.remixifyapi.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,13 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 public class RecipeLikeController {
 
     private final RecipeService recipeService;
-    private final org.dvd.remixifyapi.user.repository.UserRepository userRepository;
+    private final RecipeLikeService recipeLikeService;
 
     @PostMapping("/{recipeId}/likes")
     public ResponseEntity<RecipeDto> likeRecipe(
             @PathVariable Long recipeId, @AuthenticationPrincipal User currentUser) {
 
         if (currentUser == null) {
+            log.warn("Unauthorized attempt to like recipe");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -44,31 +43,38 @@ public class RecipeLikeController {
             return ResponseEntity.notFound().build();
         }
 
-        Recipe recipe = recipeOpt.get();
-        currentUser.getLikedRecipes().add(recipe);
-        userRepository.save(currentUser);
-        return ResponseEntity.ok(RecipeDto.fromRecipe(recipe, currentUser));
+        try {
+            Recipe recipe = recipeOpt.get();
+            Recipe updatedRecipe = recipeLikeService.likeRecipe(recipe, currentUser);
+            return ResponseEntity.ok(RecipeDto.fromRecipe(updatedRecipe, currentUser));
+        } catch (Exception e) {
+            log.error("Error liking recipe: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/{recipeId}/likes")
     public ResponseEntity<Void> unlikeRecipe(
-            @PathVariable Long recipeId,
-            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
-        Optional<User> userOpt = userRepository.findByUsername(principal.getUsername());
-        if (userOpt.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            @PathVariable Long recipeId, @AuthenticationPrincipal User currentUser) {
+        
+        if (currentUser == null) {
+            log.warn("Unauthorized attempt to unlike recipe");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        User currentUser = userOpt.get();
 
         Optional<Recipe> recipeOpt = recipeService.getRecipeById(recipeId);
         if (recipeOpt.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.warn("Recipe with id {} not found", recipeId);
+            return ResponseEntity.notFound().build();
         }
 
-        Recipe recipe = recipeOpt.get();
-        currentUser.getLikedRecipes().remove(recipe);
-        userRepository.save(currentUser);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            Recipe recipe = recipeOpt.get();
+            recipeLikeService.unlikeRecipe(recipe, currentUser);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Error unliking recipe: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

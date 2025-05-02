@@ -25,12 +25,18 @@ public class RecipeLikeService {
                         .findById(user.getId())
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!recipe.getLikedByUsers().contains(freshUser)) {
-            recipe.getLikedByUsers().add(freshUser);
-            freshUser.getLikedRecipes().add(recipe);
-            recipe.setLikes((long) recipe.getLikedByUsers().size());
+        Recipe freshRecipe = recipeRepository.findById(recipe.getId())
+                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        if (!freshRecipe.getLikedByUsers().contains(freshUser)) {
+            freshRecipe.getLikedByUsers().add(freshUser);
+            freshUser.getLikedRecipes().add(freshRecipe);
+            freshRecipe.setLikes((long) freshRecipe.getLikedByUsers().size());
+            
+            recipeRepository.save(freshRecipe);
+            userRepository.save(freshUser);
         }
-        return recipeRepository.save(recipe);
+        return freshRecipe;
     }
 
     @Transactional
@@ -40,12 +46,18 @@ public class RecipeLikeService {
                         .findById(user.getId())
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (recipe.getLikedByUsers().contains(freshUser)) {
-            recipe.getLikedByUsers().remove(freshUser);
-            freshUser.getLikedRecipes().remove(recipe);
-            recipe.setLikes((long) recipe.getLikedByUsers().size());
+        Recipe freshRecipe = recipeRepository.findById(recipe.getId())
+                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        if (freshRecipe.getLikedByUsers().contains(freshUser)) {
+            freshRecipe.getLikedByUsers().remove(freshUser);
+            freshUser.getLikedRecipes().remove(freshRecipe);
+            freshRecipe.setLikes((long) freshRecipe.getLikedByUsers().size());
+            
+            recipeRepository.save(freshRecipe);
+            userRepository.save(freshUser);
         }
-        return recipeRepository.save(recipe);
+        return freshRecipe;
     }
 
     @Transactional(readOnly = true)

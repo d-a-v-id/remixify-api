@@ -8,6 +8,7 @@ import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.model.RecipeIngredient;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.repository.RecipeRepository;
+import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class DatabaseInitConfig {
         private final UserRepository userRepository;
         private final RecipeRepository recipeRepository;
         private final IngredientRepository ingredientRepository;
+        private final RecipeLikeService recipeLikeService;
         private final PasswordEncoder passwordEncoder;
 
         @PostConstruct
@@ -533,51 +535,26 @@ public class DatabaseInitConfig {
 
                 // ESTABLISH CLEAR USER PREFERENCE PATTERNS FOR RECOMMENDATIONS
 
-                // David - Clear preference for avocado, mango, honey dishes, and breakfast
-                // items
-                david.getLikedRecipes().clear();
-                david.getLikedRecipes().add(avocadoToast);
-                david.getLikedRecipes().add(hummus);
-                david.getLikedRecipes().add(smoothieBowl);
-                david.getLikedRecipes().add(mangoAvocadoSalad);
-                david.getLikedRecipes().add(frenchToast);
+                // David - Preference for avocado, mango, honey dishes, and breakfast items
+                recipeLikeService.likeRecipe(avocadoToast, david);
+                recipeLikeService.likeRecipe(hummus, david);
+                recipeLikeService.likeRecipe(smoothieBowl, david);
+                recipeLikeService.likeRecipe(mangoAvocadoSalad, david);
+                recipeLikeService.likeRecipe(frenchToast, david);
 
-                // Clear previous preferences and set new ones with clearer patterns
-                david.getPreferredIngredients().clear();
-                david.addPreferredIngredient(avocado);
-                david.addPreferredIngredient(mango);
-                david.addPreferredIngredient(honey);
-                david.addPreferredIngredient(bread);
+                // Midudev - Preference for bread dishes
+                recipeLikeService.likeRecipe(avocadoToast, midudev);
+                recipeLikeService.likeRecipe(pbBananaToast, midudev);
+                recipeLikeService.likeRecipe(frenchToast, midudev);
+                recipeLikeService.likeRecipe(chickpeaSalad, midudev);
 
-                // Midudev - Clear preference for bread-based dishes and savory breakfast
-                midudev.getLikedRecipes().clear();
-                midudev.getLikedRecipes().add(avocadoToast);
-                midudev.getLikedRecipes().add(pbBananaToast);
-                midudev.getLikedRecipes().add(frenchToast);
-                midudev.getLikedRecipes().add(chickpeaSalad);
+                // Amaia - Preference for fruit recipes and breakfast bowls
+                recipeLikeService.likeRecipe(smoothieBowl, amaia);
+                recipeLikeService.likeRecipe(parfait, amaia);
+                recipeLikeService.likeRecipe(bananaPancakes, amaia);
+                recipeLikeService.likeRecipe(overnightOats, amaia);
+                recipeLikeService.likeRecipe(mangoAvocadoSalad, amaia);
 
-                midudev.getPreferredIngredients().clear();
-                midudev.addPreferredIngredient(bread);
-                midudev.addPreferredIngredient(eggs);
-                midudev.addPreferredIngredient(avocado);
-                midudev.addPreferredIngredient(chickpeas);
-
-                // Amaia - Clear preference for fruit-based recipes and breakfast bowls
-                amaia.getLikedRecipes().clear();
-                amaia.getLikedRecipes().add(smoothieBowl);
-                amaia.getLikedRecipes().add(parfait);
-                amaia.getLikedRecipes().add(bananaPancakes);
-                amaia.getLikedRecipes().add(overnightOats);
-                amaia.getLikedRecipes().add(mangoAvocadoSalad);
-
-                amaia.getPreferredIngredients().clear();
-                amaia.addPreferredIngredient(banana);
-                amaia.addPreferredIngredient(honey);
-                amaia.addPreferredIngredient(granola);
-                amaia.addPreferredIngredient(yogurt);
-                amaia.addPreferredIngredient(oats);
-
-                // Save all users with their likes and preferences
                 userRepository.saveAll(List.of(david, midudev, amaia));
         }
 
