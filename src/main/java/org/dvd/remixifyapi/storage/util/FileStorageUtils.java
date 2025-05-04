@@ -6,8 +6,11 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import lombok.Getter;
+
 @Component
 public class FileStorageUtils {
+    @Getter
     private static String remixifyBaseUrl;
 
     @Value("${app.base-url}")

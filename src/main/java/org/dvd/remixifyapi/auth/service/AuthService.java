@@ -8,6 +8,7 @@ import org.dvd.remixifyapi.auth.dto.RegisterRequestDto;
 import org.dvd.remixifyapi.auth.dto.TokenResponse;
 import org.dvd.remixifyapi.email.service.EmailService;
 import org.dvd.remixifyapi.shared.security.jwt.JwtService;
+import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -85,7 +86,7 @@ public class AuthService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         String resetToken = jwtService.generatePasswordResetToken(user);
-        String resetLink = String.format("http://localhost:5173/reset-password?token=%s", resetToken);
+        String resetLink = String.format("%s/reset-password?token=%s", FileStorageUtils.getRemixifyBaseUrl(), resetToken);
 
         Map<String, Object> templateVariables = new HashMap<>();
         templateVariables.put("firstName", user.getFirstName());
