@@ -59,6 +59,7 @@ public class RecipeController {
             @RequestParam(defaultValue = "6") int size,
             @RequestParam(required = false) String label,
             @RequestParam(required = false) List<String> ingredients,
+            @RequestParam(required = false) String author,
             @AuthenticationPrincipal User currentUser) {
         int zeroBasedPage = page - 1;
         if (zeroBasedPage < 0) {
@@ -68,7 +69,8 @@ public class RecipeController {
         Page<Recipe> recipes = recipeService.getAllRecipes(
                 PageRequest.of(zeroBasedPage, size),
                 label,
-                ingredients);
+                ingredients,
+                author);
         
         List<RecipeDto> recipeDtos = recipes.getContent().stream()
                 .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
@@ -154,6 +156,10 @@ public class RecipeController {
             @AuthenticationPrincipal User currentUser,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
             ObjectMapper objectMapper = new ObjectMapper();
             RecipeDto recipeRequest = objectMapper.readValue(recipeJson, RecipeDto.class);
 

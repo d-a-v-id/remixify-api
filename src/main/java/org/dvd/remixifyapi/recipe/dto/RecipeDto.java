@@ -6,11 +6,17 @@ import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class RecipeDto {
     private Long id;
     private String name;
@@ -27,13 +33,58 @@ public class RecipeDto {
     private Long likes;
     private boolean isLikedByUser;
 
+    @JsonCreator
+    public RecipeDto(
+            @JsonProperty("id") Long id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("imagePath") String imagePath,
+            @JsonProperty("author") RecipeUserDto author,
+            @JsonProperty("label") String label,
+            @JsonProperty("labelDescription") String labelDescription,
+            @JsonProperty("steps") List<String> steps,
+            @JsonProperty("ingredients") List<IngredientDto> ingredients,
+            @JsonProperty("cookTime") Long cookTime,
+            @JsonProperty("servings") Integer servings,
+            @JsonProperty("difficulty") String difficulty,
+            @JsonProperty("likes") Long likes,
+            @JsonProperty("isLikedByUser") boolean isLikedByUser) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.author = author;
+        this.label = label;
+        this.labelDescription = labelDescription;
+        this.steps = steps;
+        this.ingredients = ingredients;
+        this.cookTime = cookTime;
+        this.servings = servings;
+        this.difficulty = difficulty;
+        this.likes = likes;
+        this.isLikedByUser = isLikedByUser;
+    }
+
     @Data
     @Builder
+    @NoArgsConstructor
     public static class IngredientDto {
         private Long id;
         private String name;
         private double quantity;
         private String unit;
+
+        @JsonCreator
+        public IngredientDto(
+                @JsonProperty("id") Long id,
+                @JsonProperty("name") String name,
+                @JsonProperty("quantity") double quantity,
+                @JsonProperty("unit") String unit) {
+            this.id = id;
+            this.name = name;
+            this.quantity = quantity;
+            this.unit = unit;
+        }
     }
 
     public static RecipeDto fromRecipe(Recipe recipe) {

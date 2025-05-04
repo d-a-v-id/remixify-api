@@ -22,7 +22,7 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
 
-    public Page<Recipe> getAllRecipes(Pageable pageable, String label, List<String> ingredients) {
+    public Page<Recipe> getAllRecipes(Pageable pageable, String label, List<String> ingredients, String author) {
         if (label != null && !label.isEmpty()) {
             return recipeRepository.findByLabel(Label.valueOf(label.toUpperCase()), pageable);
         }
@@ -31,6 +31,9 @@ public class RecipeService {
                     .map(String::toLowerCase)
                     .toList();
             return recipeRepository.findByRecipeIngredients(lowercaseIngredients, pageable);
+        }
+        if (author != null && !author.isEmpty()) {
+            return recipeRepository.findByAuthor(author, pageable);
         }
         return recipeRepository.findAll(pageable);
     }

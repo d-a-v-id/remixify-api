@@ -9,6 +9,7 @@ import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recommendation.RecommendationService;
 import org.dvd.remixifyapi.recommendation.dto.RecommendationResponse;
 import org.dvd.remixifyapi.storage.service.FileStorageService;
+import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.service.UserService;
@@ -115,7 +116,7 @@ public class UserController {
                     Map.of(
                             "message", "Profile picture updated successfully",
                             "username", username,
-                            "avatarPath", avatarPath));
+                            "avatarPath", FileStorageUtils.getFullAvatarImageUrl(avatarPath)));
         } catch (Exception e) {
             log.error("Error updating profile picture: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
