@@ -16,6 +16,7 @@ public class UserDto {
     private String email;
     private String avatarPath;
     private int recipeCount;
+    private Long createdAt;
 
     public static UserDto fromUser(User user) {
         return UserDto.builder()
@@ -26,6 +27,7 @@ public class UserDto {
                 .email(user.getEmail())
                 .avatarPath(FileStorageUtils.getFullAvatarImageUrl(user.getAvatarPath()))
                 .recipeCount(user.getRecipes().size())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 
