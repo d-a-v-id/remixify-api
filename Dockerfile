@@ -14,7 +14,6 @@ RUN ./mvnw clean package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
-VOLUME /tmp
 
 # Copy the JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
