@@ -40,12 +40,8 @@ public class AwsService implements StorageService {
                 .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-        URL url = s3Client.utilities().getUrl(GetUrlRequest.builder()
-                .bucket(bucketName)
-                .key(s3Key)
-                .build());
 
-        return url.toString();
+        return s3Key;
     }
 
     @Override

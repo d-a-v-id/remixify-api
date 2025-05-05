@@ -25,7 +25,7 @@ public class UserDto {
                 .lastName(user.getLastName())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .avatarPath(user.getAvatarPath())
+                .avatarPath(FileStorageUtils.getFullAvatarImageUrl(user.getAvatarPath()))
                 .recipeCount(user.getRecipes().size())
                 .createdAt(user.getCreatedAt())
                 .build();

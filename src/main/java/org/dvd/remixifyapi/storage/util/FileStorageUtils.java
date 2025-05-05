@@ -13,6 +13,7 @@ public class FileStorageUtils {
     @Getter
     private static String remixifyBaseUrl;
     private static String s3BaseUrl;
+    private static String storageType;
 
     @Value("${app.base-url}")
     public void setRemixifyBaseUrl(String url) {
@@ -22,6 +23,11 @@ public class FileStorageUtils {
     @Value("${aws.s3.base-url:}")
     public void setS3BaseUrl(String url) {
         s3BaseUrl = url;
+    }
+
+    @Value("${app.storage.type:local}")
+    public void setStorageType(String type) {
+        storageType = type;
     }
 
     public static final String RECIPES_PATH = "uploads/recipes";
@@ -39,17 +45,7 @@ public class FileStorageUtils {
             return avatarPath;
         }
 
-        // If it's an S3 path and we have an S3 base URL configured
-        if (avatarPath.startsWith("uploads/") && s3BaseUrl != null && !s3BaseUrl.isEmpty()) {
-            return s3BaseUrl + "/" + avatarPath;
-        }
-
-        // For local storage, check if file exists
-        if (!Files.exists(Path.of(avatarPath))) {
-            return getDefaultAvatarUrl();
-        }
-
-        return prependBaseUrl(avatarPath);
+        return getFullUrl(avatarPath);
     }
 
     public static String getFullRecipeImageUrl(String recipeImagePath) {
@@ -62,31 +58,33 @@ public class FileStorageUtils {
             return recipeImagePath;
         }
 
-        // If it's an S3 path and we have an S3 base URL configured
-        if (recipeImagePath.startsWith("uploads/") && s3BaseUrl != null && !s3BaseUrl.isEmpty()) {
-            return s3BaseUrl + "/" + recipeImagePath;
-        }
-
-        // For local storage, check if file exists
-        if (!Files.exists(Path.of(recipeImagePath))) {
-            return getDefaultRecipeUrl();
-        }
-
-        return prependBaseUrl(recipeImagePath);
+        return getFullUrl(recipeImagePath);
     }
 
     private static String getDefaultAvatarUrl() {
-        if (s3BaseUrl != null && !s3BaseUrl.isEmpty()) {
-            return s3BaseUrl + "/" + DEFAULT_AVATAR_PATH;
-        }
-        return prependBaseUrl(DEFAULT_AVATAR_PATH);
+        return getFullUrl(DEFAULT_AVATAR_PATH);
     }
 
     private static String getDefaultRecipeUrl() {
-        if (s3BaseUrl != null && !s3BaseUrl.isEmpty()) {
-            return s3BaseUrl + "/" + DEFAULT_RECIPE_PATH;
+        return getFullUrl(DEFAULT_RECIPE_PATH);
+    }
+
+    private static String getFullUrl(String path) {
+        if (path == null) {
+            return null;
         }
-        return prependBaseUrl(DEFAULT_RECIPE_PATH);
+
+        // For S3 storage
+        if ("s3".equalsIgnoreCase(storageType) && s3BaseUrl != null && !s3BaseUrl.isEmpty()) {
+            return s3BaseUrl + "/" + path;
+        }
+
+        // For local storage
+        if (!Files.exists(Path.of(path))) {
+            return null;
+        }
+
+        return prependBaseUrl(path);
     }
 
     private static String prependBaseUrl(String path) {

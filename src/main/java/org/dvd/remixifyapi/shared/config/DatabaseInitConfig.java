@@ -20,7 +20,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@Profile({"dev", "pro"})
+@Profile({ "dev", "pro" })
 @RequiredArgsConstructor
 public class DatabaseInitConfig {
 
@@ -34,14 +34,14 @@ public class DatabaseInitConfig {
         @Transactional
         public void init() {
                 // Create users
-                User david = User.builder()
-                                .firstName("David")
-                                .lastName("Santos")
-                                .username("david")
-                                .email("dqvid01@gmail.com")
+                User mama = User.builder()
+                                .firstName("Silvia")
+                                .lastName("García")
+                                .username("mama")
+                                .email("silvia@gmail.com")
                                 .password(passwordEncoder.encode("password"))
                                 .build();
-                userRepository.save(david);
+                userRepository.save(mama);
 
                 User midudev = User.builder()
                                 .firstName("Miguel A.")
@@ -52,14 +52,14 @@ public class DatabaseInitConfig {
                                 .build();
                 userRepository.save(midudev);
 
-                User amaia = User.builder()
-                                .firstName("Amaia")
-                                .lastName("Romero")
-                                .username("amaia")
-                                .email("amaia@mail.com")
+                User david = User.builder()
+                                .firstName("David")
+                                .lastName("Santos")
+                                .username("david")
+                                .email("dqvid01@gmail.com")
                                 .password(passwordEncoder.encode("password"))
                                 .build();
-                userRepository.save(amaia);
+                userRepository.save(david);
 
                 User admin = User.builder()
                                 .firstName("Admin")
@@ -114,7 +114,6 @@ public class DatabaseInitConfig {
                 Ingredient peanutButter = createIngredient("Peanut Butter");
 
                 // BREAKFAST RECIPES
-                // Avocado Toast
                 Recipe avocadoToast = Recipe.builder()
                                 .name("Avocado Toast")
                                 .description("A simple and delicious breakfast option with creamy avocado on toasted bread.")
@@ -140,13 +139,12 @@ public class DatabaseInitConfig {
                                 createRecipeIngredient(avocadoToast, lemon, 1, RecipeIngredient.Unit.PIECE)));
                 avocadoToast = recipeRepository.save(avocadoToast);
 
-                // Avocado Egg Toast - Similar to Avocado Toast but with eggs (for recommending
-                // to avocado toast lovers)
+                // Avocado Egg Toast - Similar to Avocado Toast but with eggs (for recommending)
                 Recipe avocadoEggToast = Recipe.builder()
                                 .name("Avocado Egg Toast")
                                 .description("Creamy avocado toast topped with perfectly fried eggs - a protein-packed breakfast upgrade.")
                                 .imagePath("uploads/recipes/avocado-egg-toast.webp")
-                                .author(david)
+                                .author(mama)
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "Toast the bread slices until golden and crispy",
@@ -171,12 +169,11 @@ public class DatabaseInitConfig {
                 recipeRepository.save(avocadoEggToast);
 
                 // DIPS AND SPREADS RECIPES
-                // Hummus
                 Recipe hummus = Recipe.builder()
                                 .name("Floral Green Hummus")
                                 .description("A creamy and delicious hummus made with chickpeas, tahini, and garlic.")
                                 .imagePath("uploads/recipes/floral-hummus.webp")
-                                .author(david)
+                                .author(mama)
                                 .label(Recipe.Label.VEGAN)
                                 .steps(Arrays.asList(
                                                 "Drain and rinse the chickpeas",
@@ -199,8 +196,7 @@ public class DatabaseInitConfig {
                                 createRecipeIngredient(hummus, oliveOil, 2, RecipeIngredient.Unit.TABLESPOON)));
                 hummus = recipeRepository.save(hummus);
 
-                // White Bean Dip - Similar to hummus but with cannellini beans (for
-                // recommending to hummus lovers)
+                // White Bean Dip - Similar to hummus (for recommending to hummus lovers)
                 Recipe whiteBeanDip = Recipe.builder()
                                 .name("Rosemary White Bean Dip")
                                 .description("A smooth and aromatic dip made with cannellini beans, fresh rosemary, and garlic.")
@@ -229,11 +225,10 @@ public class DatabaseInitConfig {
                 recipeRepository.save(whiteBeanDip);
 
                 // PANCAKES AND BREAKFAST CARBS
-                // Pancakes
                 Recipe pancakes = Recipe.builder()
                                 .name("Fluffy Pancakes")
                                 .description("Light and fluffy pancakes perfect for a weekend breakfast.")
-                                .author(david)
+                                .author(mama)
                                 .imagePath("uploads/recipes/pancakes.webp")
                                 .label(Recipe.Label.QUICK)
                                 .steps(Arrays.asList(
@@ -260,12 +255,11 @@ public class DatabaseInitConfig {
                                 createRecipeIngredient(pancakes, mapleSyrup, 1, RecipeIngredient.Unit.CUP)));
                 pancakes = recipeRepository.save(pancakes);
 
-                // Banana Pancakes - Similar to pancakes but with bananas (for pancake lovers
-                // and banana enthusiasts)
+                // Banana Pancakes - Similar to pancakes (for pancake lovers)
                 Recipe bananaPancakes = Recipe.builder()
                                 .name("Banana Oat Pancakes")
                                 .description("Healthy and delicious pancakes made with mashed bananas and oats - naturally sweet!")
-                                .author(amaia)
+                                .author(david)
                                 .imagePath("uploads/recipes/banana-pancakes.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -290,11 +284,10 @@ public class DatabaseInitConfig {
                 recipeRepository.save(bananaPancakes);
 
                 // SMOOTHIE BOWLS AND BREAKFAST BOWLS
-                // Tropical Smoothie Bowl
                 Recipe smoothieBowl = Recipe.builder()
                                 .name("Tropical Smoothie Bowl")
                                 .description("A refreshing smoothie bowl with mango, banana, and coconut milk.")
-                                .author(david)
+                                .author(mama)
                                 .imagePath("uploads/recipes/smoothie-bowl.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
@@ -317,11 +310,11 @@ public class DatabaseInitConfig {
                                 createRecipeIngredient(smoothieBowl, granola, 1, RecipeIngredient.Unit.CUP)));
                 smoothieBowl = recipeRepository.save(smoothieBowl);
 
-                // Berry Smoothie Bowl - Similar to tropical smoothie bowl but with berries
+                // Berry Smoothie Bowl - for recommending
                 Recipe berrySmoothieBowl = Recipe.builder()
                                 .name("Berry Blast Smoothie Bowl")
                                 .description("A vibrant and antioxidant-rich smoothie bowl with blueberries, strawberries, and Greek yogurt.")
-                                .author(amaia)
+                                .author(david)
                                 .imagePath("uploads/recipes/berry-smoothie-bowl.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -349,7 +342,7 @@ public class DatabaseInitConfig {
                 Recipe overnightOats = Recipe.builder()
                                 .name("Banana Honey Overnight Oats")
                                 .description("Easy make-ahead breakfast with oats, banana, honey, and almonds - perfect for busy mornings.")
-                                .author(amaia)
+                                .author(david)
                                 .imagePath("uploads/recipes/overnight-oats.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -358,7 +351,7 @@ public class DatabaseInitConfig {
                                                 "Stir well, cover, and refrigerate overnight",
                                                 "In the morning, top with chopped almonds and additional banana slices",
                                                 "Enjoy cold or warm"))
-                                .cookTime(5L) // Plus overnight refrigeration
+                                .cookTime(5L)
                                 .servings(1)
                                 .difficulty(Recipe.Difficulty.EASY)
                                 .build();
@@ -377,7 +370,7 @@ public class DatabaseInitConfig {
                 Recipe mangoAvocadoSalad = Recipe.builder()
                                 .name("Mango Avocado Salad")
                                 .description("A refreshing salad with ripe mango, creamy avocado, lime juice, and a hint of honey.")
-                                .author(amaia)
+                                .author(david)
                                 .imagePath("uploads/recipes/mango-avocado-salad.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -432,7 +425,7 @@ public class DatabaseInitConfig {
                 Recipe parfait = Recipe.builder()
                                 .name("Tropical Yogurt Parfait")
                                 .description("Layers of yogurt, mango, banana, granola, and a drizzle of honey.")
-                                .author(amaia)
+                                .author(david)
                                 .imagePath("uploads/recipes/yogurt-parfait.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
@@ -456,7 +449,7 @@ public class DatabaseInitConfig {
                 Recipe berryParfait = Recipe.builder()
                                 .name("Berry Yogurt Parfait")
                                 .description("Creamy layers of yogurt with fresh berries, honey, and crunchy granola.")
-                                .author(david)
+                                .author(mama)
                                 .imagePath("uploads/recipes/berry-parfait.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
@@ -482,7 +475,7 @@ public class DatabaseInitConfig {
                 Recipe frenchToast = Recipe.builder()
                                 .name("French Toast")
                                 .description("A classic French toast recipe made with thick slices of bread, eggs, milk, and vanilla.")
-                                .author(david)
+                                .author(mama)
                                 .imagePath("uploads/recipes/french-toast.webp")
                                 .label(Recipe.Label.QUICK)
                                 .steps(Arrays.asList(
@@ -535,12 +528,12 @@ public class DatabaseInitConfig {
 
                 // ESTABLISH CLEAR USER PREFERENCE PATTERNS FOR RECOMMENDATIONS
 
-                // David - Preference for avocado, mango, honey dishes, and breakfast items
-                recipeLikeService.likeRecipe(avocadoToast, david);
-                recipeLikeService.likeRecipe(hummus, david);
-                recipeLikeService.likeRecipe(smoothieBowl, david);
-                recipeLikeService.likeRecipe(mangoAvocadoSalad, david);
-                recipeLikeService.likeRecipe(frenchToast, david);
+                // Silvia - Preference for avocado, mango, honey dishes, and breakfast items
+                recipeLikeService.likeRecipe(avocadoToast, mama);
+                recipeLikeService.likeRecipe(hummus, mama);
+                recipeLikeService.likeRecipe(smoothieBowl, mama);
+                recipeLikeService.likeRecipe(mangoAvocadoSalad, mama);
+                recipeLikeService.likeRecipe(frenchToast, mama);
 
                 // Midudev - Preference for bread dishes
                 recipeLikeService.likeRecipe(avocadoToast, midudev);
@@ -548,14 +541,14 @@ public class DatabaseInitConfig {
                 recipeLikeService.likeRecipe(frenchToast, midudev);
                 recipeLikeService.likeRecipe(chickpeaSalad, midudev);
 
-                // Amaia - Preference for fruit recipes and breakfast bowls
-                recipeLikeService.likeRecipe(smoothieBowl, amaia);
-                recipeLikeService.likeRecipe(parfait, amaia);
-                recipeLikeService.likeRecipe(bananaPancakes, amaia);
-                recipeLikeService.likeRecipe(overnightOats, amaia);
-                recipeLikeService.likeRecipe(mangoAvocadoSalad, amaia);
+                // David - Preference for fruit recipes and breakfast bowls
+                recipeLikeService.likeRecipe(smoothieBowl, david);
+                recipeLikeService.likeRecipe(parfait, david);
+                recipeLikeService.likeRecipe(bananaPancakes, david);
+                recipeLikeService.likeRecipe(overnightOats, david);
+                recipeLikeService.likeRecipe(mangoAvocadoSalad, david);
 
-                userRepository.saveAll(List.of(david, midudev, amaia));
+                userRepository.saveAll(List.of(mama, midudev, david));
         }
 
         private RecipeIngredient createRecipeIngredient(
