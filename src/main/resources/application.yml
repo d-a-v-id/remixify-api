@@ -29,10 +29,7 @@ spring:
       password: ${SPRING_SECURITY_PASSWORD}
   jpa:
     hibernate:
-      # create-drop: create the schema and drop it when the application is stopped
-      # update: create the schema and update it when the application is started
-      # validate: validate the schema and fail if it is not correct
-      ddl-auto: create-drop
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}
     show-sql: false
   web:
     cors:
