@@ -8,7 +8,7 @@ import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recommendation.RecommendationService;
 import org.dvd.remixifyapi.recommendation.dto.RecommendationResponse;
-import org.dvd.remixifyapi.storage.service.FileStorageService;
+import org.dvd.remixifyapi.storage.service.StorageService;
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
@@ -36,9 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
-    private final FileStorageService fileStorageService;
     private final UserService userService;
     private final RecommendationService recommendationService;
+    private final StorageService storageService;
 
     @GetMapping
     public List<UserDto> getUsers() {
@@ -110,7 +110,15 @@ public class UserController {
                         .body(Map.of("message", "Please upload an image file"));
             }
 
-            String avatarPath = fileStorageService.storeAvatar(image, username);
+            // Delete old avatar if it exists
+            User user = userService.getUser(username);
+            if (user.getAvatarPath() != null && !user.getAvatarPath().isEmpty()) {
+                storageService.deleteFile(user.getAvatarPath());
+            }
+
+            // Upload new avatar
+            String avatarPath = storageService.uploadFile(image, StorageService.FileType.AVATAR);
+            userService.updateUserAvatarPath(username, avatarPath);
 
             return ResponseEntity.ok(
                     Map.of(

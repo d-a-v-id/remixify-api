@@ -11,7 +11,7 @@ import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class FileStorageConfig {
-    @Value("${file.upload-dir:uploads/recipes}")
+    @Value("${file.upload-dir:uploads/}")
     private String uploadDir;
     
     @PostConstruct

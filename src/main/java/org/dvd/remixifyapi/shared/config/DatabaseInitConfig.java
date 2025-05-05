@@ -118,7 +118,7 @@ public class DatabaseInitConfig {
                 Recipe avocadoToast = Recipe.builder()
                                 .name("Avocado Toast")
                                 .description("A simple and delicious breakfast option with creamy avocado on toasted bread.")
-                                .imagePath("uploads/recipes/avocado-toast.jpg")
+                                .imagePath("uploads/recipes/avocado-toast.webp")
                                 .author(midudev)
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -145,7 +145,7 @@ public class DatabaseInitConfig {
                 Recipe avocadoEggToast = Recipe.builder()
                                 .name("Avocado Egg Toast")
                                 .description("Creamy avocado toast topped with perfectly fried eggs - a protein-packed breakfast upgrade.")
-                                .imagePath("uploads/recipes/avocado-egg-toast.jpg")
+                                .imagePath("uploads/recipes/avocado-egg-toast.webp")
                                 .author(david)
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
@@ -175,7 +175,7 @@ public class DatabaseInitConfig {
                 Recipe hummus = Recipe.builder()
                                 .name("Floral Green Hummus")
                                 .description("A creamy and delicious hummus made with chickpeas, tahini, and garlic.")
-                                .imagePath("uploads/recipes/floral-hummus.jpg")
+                                .imagePath("uploads/recipes/floral-hummus.webp")
                                 .author(david)
                                 .label(Recipe.Label.VEGAN)
                                 .steps(Arrays.asList(
@@ -204,7 +204,7 @@ public class DatabaseInitConfig {
                 Recipe whiteBeanDip = Recipe.builder()
                                 .name("Rosemary White Bean Dip")
                                 .description("A smooth and aromatic dip made with cannellini beans, fresh rosemary, and garlic.")
-                                .imagePath("uploads/recipes/white-bean-dip.jpg")
+                                .imagePath("uploads/recipes/white-bean-dip.webp")
                                 .author(midudev)
                                 .label(Recipe.Label.VEGAN)
                                 .steps(Arrays.asList(
@@ -234,7 +234,7 @@ public class DatabaseInitConfig {
                                 .name("Fluffy Pancakes")
                                 .description("Light and fluffy pancakes perfect for a weekend breakfast.")
                                 .author(david)
-                                .imagePath("uploads/recipes/pancakes.jpg")
+                                .imagePath("uploads/recipes/pancakes.webp")
                                 .label(Recipe.Label.QUICK)
                                 .steps(Arrays.asList(
                                                 "In a large bowl, whisk together flour, sugar, baking powder, and salt",
@@ -266,7 +266,7 @@ public class DatabaseInitConfig {
                                 .name("Banana Oat Pancakes")
                                 .description("Healthy and delicious pancakes made with mashed bananas and oats - naturally sweet!")
                                 .author(amaia)
-                                .imagePath("uploads/recipes/banana-pancakes.jpg")
+                                .imagePath("uploads/recipes/banana-pancakes.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "In a blender, combine oats, mashed banana, eggs, milk, and cinnamon",
@@ -295,7 +295,7 @@ public class DatabaseInitConfig {
                                 .name("Tropical Smoothie Bowl")
                                 .description("A refreshing smoothie bowl with mango, banana, and coconut milk.")
                                 .author(david)
-                                .imagePath("uploads/recipes/smoothie-bowl.jpg")
+                                .imagePath("uploads/recipes/smoothie-bowl.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
                                                 "Freeze mango chunks and banana slices ahead of time",
@@ -322,7 +322,7 @@ public class DatabaseInitConfig {
                                 .name("Berry Blast Smoothie Bowl")
                                 .description("A vibrant and antioxidant-rich smoothie bowl with blueberries, strawberries, and Greek yogurt.")
                                 .author(amaia)
-                                .imagePath("uploads/recipes/berry-smoothie-bowl.jpg")
+                                .imagePath("uploads/recipes/berry-smoothie-bowl.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "Freeze berries ahead of time",
@@ -350,7 +350,7 @@ public class DatabaseInitConfig {
                                 .name("Banana Honey Overnight Oats")
                                 .description("Easy make-ahead breakfast with oats, banana, honey, and almonds - perfect for busy mornings.")
                                 .author(amaia)
-                                .imagePath("uploads/recipes/overnight-oats.jpg")
+                                .imagePath("uploads/recipes/overnight-oats.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "In a jar, combine oats and milk",
@@ -378,7 +378,7 @@ public class DatabaseInitConfig {
                                 .name("Mango Avocado Salad")
                                 .description("A refreshing salad with ripe mango, creamy avocado, lime juice, and a hint of honey.")
                                 .author(amaia)
-                                .imagePath("uploads/recipes/mango-avocado-salad.jpg")
+                                .imagePath("uploads/recipes/mango-avocado-salad.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "Dice the mango and avocado.",
@@ -405,7 +405,7 @@ public class DatabaseInitConfig {
                                 .name("Mediterranean Chickpea Salad")
                                 .description("Chickpeas, cucumber, tomatoes, lemon, olive oil, and a bit of garlic for a protein-packed salad.")
                                 .author(midudev)
-                                .imagePath("uploads/recipes/chickpea-salad.jpg")
+                                .imagePath("uploads/recipes/chickpea-salad.webp")
                                 .label(Recipe.Label.HEALTHY)
                                 .steps(Arrays.asList(
                                                 "Rinse and drain chickpeas.",
@@ -433,7 +433,7 @@ public class DatabaseInitConfig {
                                 .name("Tropical Yogurt Parfait")
                                 .description("Layers of yogurt, mango, banana, granola, and a drizzle of honey.")
                                 .author(amaia)
-                                .imagePath("uploads/recipes/yogurt-parfait.jpg")
+                                .imagePath("uploads/recipes/yogurt-parfait.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
                                                 "Layer yogurt, mango, and banana in a glass.",
@@ -457,7 +457,7 @@ public class DatabaseInitConfig {
                                 .name("Berry Yogurt Parfait")
                                 .description("Creamy layers of yogurt with fresh berries, honey, and crunchy granola.")
                                 .author(david)
-                                .imagePath("uploads/recipes/berry-parfait.jpg")
+                                .imagePath("uploads/recipes/berry-parfait.webp")
                                 .label(Recipe.Label.DESSERT)
                                 .steps(Arrays.asList(
                                                 "Layer yogurt, blueberries, and strawberries in a glass.",
@@ -483,7 +483,7 @@ public class DatabaseInitConfig {
                                 .name("French Toast")
                                 .description("A classic French toast recipe made with thick slices of bread, eggs, milk, and vanilla.")
                                 .author(david)
-                                .imagePath("uploads/recipes/french-toast.jpg")
+                                .imagePath("uploads/recipes/french-toast.webp")
                                 .label(Recipe.Label.QUICK)
                                 .steps(Arrays.asList(
                                                 "In a shallow bowl, whisk together eggs, milk, vanilla, and cinnamon",
@@ -511,7 +511,7 @@ public class DatabaseInitConfig {
                                 .name("Peanut Butter Banana Toast")
                                 .description("Simple yet satisfying breakfast with whole grain toast, creamy peanut butter, and fresh banana slices.")
                                 .author(midudev)
-                                .imagePath("uploads/recipes/pb-banana-toast.jpg")
+                                .imagePath("uploads/recipes/pb-banana-toast.webp")
                                 .label(Recipe.Label.QUICK)
                                 .steps(Arrays.asList(
                                                 "Toast the bread slices until golden and crispy",
