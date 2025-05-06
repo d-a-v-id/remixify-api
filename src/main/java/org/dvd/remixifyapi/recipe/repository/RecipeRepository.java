@@ -1,6 +1,7 @@
 package org.dvd.remixifyapi.recipe.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.model.Recipe.Label;
@@ -22,6 +23,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Page<Recipe> findByOrderByLikesDesc(Pageable pageable);
 
     Page<Recipe> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Optional<Recipe> findByName(String name);
 
     @Query("SELECT DISTINCT r FROM Recipe r JOIN r.recipeIngredients ri JOIN ri.ingredient i WHERE LOWER(i.name) IN :ingredients")
     Page<Recipe> findByRecipeIngredients(@Param("ingredients") List<String> ingredients, Pageable pageable);

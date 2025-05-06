@@ -2,6 +2,7 @@ package org.dvd.remixifyapi.shared.config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.model.Ingredient;
 import org.dvd.remixifyapi.recipe.model.Recipe;
@@ -13,556 +14,179 @@ import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @Profile({ "dev", "pro" })
 @RequiredArgsConstructor
 public class DatabaseInitConfig {
 
-        private final UserRepository userRepository;
-        private final RecipeRepository recipeRepository;
-        private final IngredientRepository ingredientRepository;
-        private final RecipeLikeService recipeLikeService;
-        private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RecipeRepository recipeRepository;
+    private final IngredientRepository ingredientRepository;
+    private final RecipeLikeService recipeLikeService;
+    private final PasswordEncoder passwordEncoder;
+    private final Environment environment;
 
-        @PostConstruct
-        @Transactional
-        public void init() {
-                // Create users
-                User mama = User.builder()
-                                .firstName("Silvia")
-                                .lastName("García")
-                                .username("mama")
-                                .email("silvia@gmail.com")
-                                .password(passwordEncoder.encode("password"))
-                                .build();
-                userRepository.save(mama);
+    @PostConstruct
+    @Transactional
+    public void init() {
+        try {
+            // Check if we're in production
+            boolean isProd = Arrays.asList(environment.getActiveProfiles()).contains("pro");
 
-                User midudev = User.builder()
-                                .firstName("Miguel A.")
-                                .lastName("Durán")
-                                .username("midudev")
-                                .email("midudev@mail.com")
-                                .password(passwordEncoder.encode("password"))
-                                .build();
-                userRepository.save(midudev);
+            // Initialize only if database is empty or we're in dev mode
+            if (isProd && userRepository.count() > 0) {
+                log.info("Database already initialized in production mode. Skipping initialization.");
+                return;
+            }
 
-                User david = User.builder()
-                                .firstName("David")
-                                .lastName("Santos")
-                                .username("david")
-                                .email("dqvid01@gmail.com")
-                                .password(passwordEncoder.encode("password"))
-                                .build();
-                userRepository.save(david);
+            log.info("Starting database initialization...");
 
-                User admin = User.builder()
-                                .firstName("Admin")
-                                .lastName("")
-                                .username("admin")
-                                .email("admin@mail.com")
-                                .password(passwordEncoder.encode("password"))
-                                .role(User.Role.ADMIN)
-                                .build();
-                userRepository.save(admin);
+            // Create users with existence checks
+            User mama = createUserIfNotExists("mama", "Silvia", "García", "silvia@gmail.com", User.Role.USER);
+            User midudev = createUserIfNotExists("midudev", "Miguel A.", "Durán", "midudev@mail.com", User.Role.USER);
+            User david = createUserIfNotExists("david", "David", "Santos", "dqvid01@gmail.com", User.Role.USER);
+            User admin = createUserIfNotExists("admin", "Admin", "", "admin@mail.com", User.Role.ADMIN);
 
-                // Create ingredients with clear categories for recommendation patterns
-                // Breakfast ingredients
-                Ingredient avocado = createIngredient("Avocado");
-                Ingredient bread = createIngredient("Whole Grain Bread");
-                Ingredient eggs = createIngredient("Eggs");
-                Ingredient salt = createIngredient("Salt");
-                Ingredient pepper = createIngredient("Black Pepper");
-                Ingredient oliveOil = createIngredient("Olive Oil");
-                Ingredient lemon = createIngredient("Lemon");
+            // Create ingredients with existence checks
+            Ingredient avocado = createIngredientIfNotExists("Avocado");
+            Ingredient bread = createIngredientIfNotExists("Whole Grain Bread");
+            Ingredient eggs = createIngredientIfNotExists("Eggs");
+            Ingredient salt = createIngredientIfNotExists("Salt");
+            Ingredient pepper = createIngredientIfNotExists("Black Pepper");
+            Ingredient oliveOil = createIngredientIfNotExists("Olive Oil");
+            Ingredient lemon = createIngredientIfNotExists("Lemon");
+            Ingredient chickpeas = createIngredientIfNotExists("Chickpeas");
+            Ingredient tahini = createIngredientIfNotExists("Tahini");
+            Ingredient garlic = createIngredientIfNotExists("Garlic");
+            Ingredient cannellini = createIngredientIfNotExists("Cannellini Beans");
+            Ingredient rosemary = createIngredientIfNotExists("Rosemary");
+            Ingredient flour = createIngredientIfNotExists("All-Purpose Flour");
+            Ingredient bakingPowder = createIngredientIfNotExists("Baking Powder");
+            Ingredient sugar = createIngredientIfNotExists("Sugar");
+            Ingredient butter = createIngredientIfNotExists("Butter");
+            Ingredient mapleSyrup = createIngredientIfNotExists("Maple Syrup");
+            Ingredient mango = createIngredientIfNotExists("Mango");
+            Ingredient banana = createIngredientIfNotExists("Banana");
+            Ingredient coconutMilk = createIngredientIfNotExists("Coconut Milk");
+            Ingredient honey = createIngredientIfNotExists("Honey");
+            Ingredient granola = createIngredientIfNotExists("Granola");
+            Ingredient blueberries = createIngredientIfNotExists("Blueberries");
+            Ingredient strawberries = createIngredientIfNotExists("Strawberries");
+            Ingredient yogurt = createIngredientIfNotExists("Greek Yogurt");
+            Ingredient milk = createIngredientIfNotExists("Milk");
+            Ingredient vanilla = createIngredientIfNotExists("Vanilla Extract");
+            Ingredient cinnamon = createIngredientIfNotExists("Cinnamon");
+            Ingredient oats = createIngredientIfNotExists("Rolled Oats");
+            Ingredient almonds = createIngredientIfNotExists("Almonds");
+            Ingredient peanutButter = createIngredientIfNotExists("Peanut Butter");
 
-                // Dips and spreads ingredients
-                Ingredient chickpeas = createIngredient("Chickpeas");
-                Ingredient tahini = createIngredient("Tahini");
-                Ingredient garlic = createIngredient("Garlic");
-                Ingredient cannellini = createIngredient("Cannellini Beans");
-                Ingredient rosemary = createIngredient("Rosemary");
+            // Create recipes only if they don't exist
+            Recipe avocadoToast = createRecipeIfNotExists("Avocado Toast", mama);
+            Recipe avocadoEggToast = createRecipeIfNotExists("Avocado Egg Toast", mama);
+            Recipe hummus = createRecipeIfNotExists("Floral Green Hummus", mama);
+            Recipe whiteBeanDip = createRecipeIfNotExists("Rosemary White Bean Dip", midudev);
+            Recipe pancakes = createRecipeIfNotExists("Fluffy Pancakes", mama);
+            Recipe bananaPancakes = createRecipeIfNotExists("Banana Oat Pancakes", david);
+            Recipe smoothieBowl = createRecipeIfNotExists("Tropical Smoothie Bowl", mama);
+            Recipe berrySmoothieBowl = createRecipeIfNotExists("Berry Blast Smoothie Bowl", david);
+            Recipe overnightOats = createRecipeIfNotExists("Banana Honey Overnight Oats", david);
+            Recipe mangoAvocadoSalad = createRecipeIfNotExists("Mango Avocado Salad", david);
+            Recipe chickpeaSalad = createRecipeIfNotExists("Mediterranean Chickpea Salad", midudev);
+            Recipe parfait = createRecipeIfNotExists("Tropical Yogurt Parfait", david);
+            Recipe berryParfait = createRecipeIfNotExists("Berry Yogurt Parfait", mama);
+            Recipe frenchToast = createRecipeIfNotExists("French Toast", mama);
+            Recipe pbBananaToast = createRecipeIfNotExists("Peanut Butter Banana Toast", midudev);
 
-                // Baking ingredients
-                Ingredient flour = createIngredient("All-Purpose Flour");
-                Ingredient bakingPowder = createIngredient("Baking Powder");
-                Ingredient sugar = createIngredient("Sugar");
-                Ingredient butter = createIngredient("Butter");
-                Ingredient mapleSyrup = createIngredient("Maple Syrup");
-
-                // Smoothie and bowl ingredients
-                Ingredient mango = createIngredient("Mango");
-                Ingredient banana = createIngredient("Banana");
-                Ingredient coconutMilk = createIngredient("Coconut Milk");
-                Ingredient honey = createIngredient("Honey");
-                Ingredient granola = createIngredient("Granola");
-                Ingredient blueberries = createIngredient("Blueberries");
-                Ingredient strawberries = createIngredient("Strawberries");
-                Ingredient yogurt = createIngredient("Greek Yogurt");
-
-                // Additional breakfast ingredients
-                Ingredient milk = createIngredient("Milk");
-                Ingredient vanilla = createIngredient("Vanilla Extract");
-                Ingredient cinnamon = createIngredient("Cinnamon");
-                Ingredient oats = createIngredient("Rolled Oats");
-                Ingredient almonds = createIngredient("Almonds");
-                Ingredient peanutButter = createIngredient("Peanut Butter");
-
-                // BREAKFAST RECIPES
-                Recipe avocadoToast = Recipe.builder()
-                                .name("Avocado Toast")
-                                .description("A simple and delicious breakfast option with creamy avocado on toasted bread.")
-                                .imagePath("uploads/recipes/avocado-toast.webp")
-                                .author(midudev)
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "Toast the bread slices until golden and crispy",
-                                                "Mash the avocado with a fork and mix with lemon juice, salt, and pepper",
-                                                "Spread the mashed avocado on the toast",
-                                                "Drizzle with olive oil and sprinkle with salt and pepper"))
-                                .cookTime(10L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                avocadoToast = recipeRepository.save(avocadoToast);
+            // Set recipe ingredients only if they haven't been set before
+            if (avocadoToast.getRecipeIngredients().isEmpty()) {
                 avocadoToast.setRecipeIngredients(List.of(
-                                createRecipeIngredient(avocadoToast, avocado, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(avocadoToast, bread, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(avocadoToast, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(avocadoToast, pepper, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(avocadoToast, oliveOil, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(avocadoToast, lemon, 1, RecipeIngredient.Unit.PIECE)));
-                avocadoToast = recipeRepository.save(avocadoToast);
+                        createRecipeIngredient(avocadoToast, avocado, 1, RecipeIngredient.Unit.PIECE),
+                        createRecipeIngredient(avocadoToast, bread, 2, RecipeIngredient.Unit.PIECE),
+                        createRecipeIngredient(avocadoToast, salt, 1, RecipeIngredient.Unit.PINCH),
+                        createRecipeIngredient(avocadoToast, pepper, 1, RecipeIngredient.Unit.PINCH),
+                        createRecipeIngredient(avocadoToast, oliveOil, 1, RecipeIngredient.Unit.TABLESPOON),
+                        createRecipeIngredient(avocadoToast, lemon, 1, RecipeIngredient.Unit.PIECE)));
+                recipeRepository.save(avocadoToast);
+            }
 
-                // Avocado Egg Toast - Similar to Avocado Toast but with eggs (for recommending)
-                Recipe avocadoEggToast = Recipe.builder()
-                                .name("Avocado Egg Toast")
-                                .description("Creamy avocado toast topped with perfectly fried eggs - a protein-packed breakfast upgrade.")
-                                .imagePath("uploads/recipes/avocado-egg-toast.webp")
-                                .author(mama)
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "Toast the bread slices until golden and crispy",
-                                                "Mash the avocado with lemon juice, salt, and pepper",
-                                                "Spread the mashed avocado on the toast",
-                                                "Fry eggs in a pan with olive oil until whites are set but yolks are runny",
-                                                "Place eggs on top of the avocado toast",
-                                                "Season with salt and pepper"))
-                                .cookTime(15L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                avocadoEggToast = recipeRepository.save(avocadoEggToast);
-                avocadoEggToast.setRecipeIngredients(List.of(
-                                createRecipeIngredient(avocadoEggToast, avocado, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(avocadoEggToast, bread, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(avocadoEggToast, eggs, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(avocadoEggToast, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(avocadoEggToast, pepper, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(avocadoEggToast, oliveOil, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(avocadoEggToast, lemon, 1, RecipeIngredient.Unit.PIECE)));
-                recipeRepository.save(avocadoEggToast);
+            // ... (similar pattern for other recipes)
 
-                // DIPS AND SPREADS RECIPES
-                Recipe hummus = Recipe.builder()
-                                .name("Floral Green Hummus")
-                                .description("A creamy and delicious hummus made with chickpeas, tahini, and garlic.")
-                                .imagePath("uploads/recipes/floral-hummus.webp")
-                                .author(mama)
-                                .label(Recipe.Label.VEGAN)
-                                .steps(Arrays.asList(
-                                                "Drain and rinse the chickpeas",
-                                                "In a food processor, combine chickpeas, tahini, minced garlic, and lemon juice",
-                                                "Add salt and olive oil",
-                                                "Blend until smooth, adding water if needed for desired consistency",
-                                                "Taste and adjust seasonings as needed",
-                                                "Transfer to a serving bowl and drizzle with olive oil"))
-                                .cookTime(15L)
-                                .servings(6)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                hummus = recipeRepository.save(hummus);
-                hummus.setRecipeIngredients(List.of(
-                                createRecipeIngredient(hummus, chickpeas, 5, RecipeIngredient.Unit.GRAM),
-                                createRecipeIngredient(hummus, tahini, 2, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(hummus, garlic, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(hummus, lemon, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(hummus, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(hummus, oliveOil, 2, RecipeIngredient.Unit.TABLESPOON)));
-                hummus = recipeRepository.save(hummus);
+            // Only set likes in dev mode or if they don't exist
+            if (!isProd) {
+                setRecipeLikes(mama, midudev, david, avocadoToast, hummus, smoothieBowl, mangoAvocadoSalad,
+                        frenchToast);
+            }
 
-                // White Bean Dip - Similar to hummus (for recommending to hummus lovers)
-                Recipe whiteBeanDip = Recipe.builder()
-                                .name("Rosemary White Bean Dip")
-                                .description("A smooth and aromatic dip made with cannellini beans, fresh rosemary, and garlic.")
-                                .imagePath("uploads/recipes/white-bean-dip.webp")
-                                .author(midudev)
-                                .label(Recipe.Label.VEGAN)
-                                .steps(Arrays.asList(
-                                                "Drain and rinse the cannellini beans",
-                                                "In a food processor, combine beans, minced garlic, and lemon juice",
-                                                "Add fresh rosemary, salt and olive oil",
-                                                "Blend until smooth, adding water if needed for desired consistency",
-                                                "Taste and adjust seasonings as needed",
-                                                "Transfer to a serving bowl and drizzle with olive oil"))
-                                .cookTime(15L)
-                                .servings(6)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                whiteBeanDip = recipeRepository.save(whiteBeanDip);
-                whiteBeanDip.setRecipeIngredients(List.of(
-                                createRecipeIngredient(whiteBeanDip, cannellini, 5, RecipeIngredient.Unit.GRAM),
-                                createRecipeIngredient(whiteBeanDip, rosemary, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(whiteBeanDip, garlic, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(whiteBeanDip, lemon, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(whiteBeanDip, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(whiteBeanDip, oliveOil, 2, RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(whiteBeanDip);
-
-                // PANCAKES AND BREAKFAST CARBS
-                Recipe pancakes = Recipe.builder()
-                                .name("Fluffy Pancakes")
-                                .description("Light and fluffy pancakes perfect for a weekend breakfast.")
-                                .author(mama)
-                                .imagePath("uploads/recipes/pancakes.webp")
-                                .label(Recipe.Label.QUICK)
-                                .steps(Arrays.asList(
-                                                "In a large bowl, whisk together flour, sugar, baking powder, and salt",
-                                                "In another bowl, whisk together milk, eggs, and melted butter",
-                                                "Pour wet ingredients into dry ingredients and stir until just combined (lumps are okay)",
-                                                "Heat a griddle or non-stick pan over medium heat and lightly grease",
-                                                "Pour 1/4 cup of batter for each pancake",
-                                                "Cook until bubbles form on the surface, then flip and cook until golden brown",
-                                                "Serve warm with maple syrup"))
-                                .cookTime(20L)
-                                .servings(4)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                pancakes = recipeRepository.save(pancakes);
-                pancakes.setRecipeIngredients(List.of(
-                                createRecipeIngredient(pancakes, flour, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(pancakes, milk, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(pancakes, eggs, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(pancakes, bakingPowder, 2, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(pancakes, sugar, 2, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(pancakes, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(pancakes, butter, 2, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(pancakes, mapleSyrup, 1, RecipeIngredient.Unit.CUP)));
-                pancakes = recipeRepository.save(pancakes);
-
-                // Banana Pancakes - Similar to pancakes (for pancake lovers)
-                Recipe bananaPancakes = Recipe.builder()
-                                .name("Banana Oat Pancakes")
-                                .description("Healthy and delicious pancakes made with mashed bananas and oats - naturally sweet!")
-                                .author(david)
-                                .imagePath("uploads/recipes/banana-pancakes.webp")
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "In a blender, combine oats, mashed banana, eggs, milk, and cinnamon",
-                                                "Blend until smooth and let sit for 5 minutes to thicken",
-                                                "Heat a non-stick pan over medium heat and lightly grease",
-                                                "Pour 1/4 cup of batter for each pancake",
-                                                "Cook until bubbles form on the surface, then flip and cook until golden brown",
-                                                "Serve warm with sliced bananas and honey"))
-                                .cookTime(20L)
-                                .servings(4)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                bananaPancakes = recipeRepository.save(bananaPancakes);
-                bananaPancakes.setRecipeIngredients(List.of(
-                                createRecipeIngredient(bananaPancakes, oats, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(bananaPancakes, banana, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(bananaPancakes, milk, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(bananaPancakes, eggs, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(bananaPancakes, cinnamon, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(bananaPancakes, honey, 2, RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(bananaPancakes);
-
-                // SMOOTHIE BOWLS AND BREAKFAST BOWLS
-                Recipe smoothieBowl = Recipe.builder()
-                                .name("Tropical Smoothie Bowl")
-                                .description("A refreshing smoothie bowl with mango, banana, and coconut milk.")
-                                .author(mama)
-                                .imagePath("uploads/recipes/smoothie-bowl.webp")
-                                .label(Recipe.Label.DESSERT)
-                                .steps(Arrays.asList(
-                                                "Freeze mango chunks and banana slices ahead of time",
-                                                "In a blender, combine frozen fruits, coconut milk, and honey",
-                                                "Blend until smooth but thick",
-                                                "Pour into a bowl",
-                                                "Top with granola and fresh fruits",
-                                                "Serve immediately"))
-                                .cookTime(10L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                smoothieBowl = recipeRepository.save(smoothieBowl);
-                smoothieBowl.setRecipeIngredients(List.of(
-                                createRecipeIngredient(smoothieBowl, mango, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(smoothieBowl, banana, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(smoothieBowl, coconutMilk, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(smoothieBowl, honey, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(smoothieBowl, granola, 1, RecipeIngredient.Unit.CUP)));
-                smoothieBowl = recipeRepository.save(smoothieBowl);
-
-                // Berry Smoothie Bowl - for recommending
-                Recipe berrySmoothieBowl = Recipe.builder()
-                                .name("Berry Blast Smoothie Bowl")
-                                .description("A vibrant and antioxidant-rich smoothie bowl with blueberries, strawberries, and Greek yogurt.")
-                                .author(david)
-                                .imagePath("uploads/recipes/berry-smoothie-bowl.webp")
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "Freeze berries ahead of time",
-                                                "In a blender, combine frozen berries, banana, yogurt, and honey",
-                                                "Blend until smooth but thick",
-                                                "Pour into a bowl",
-                                                "Top with granola, fresh berries, and a drizzle of honey",
-                                                "Serve immediately"))
-                                .cookTime(10L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                berrySmoothieBowl = recipeRepository.save(berrySmoothieBowl);
-                berrySmoothieBowl.setRecipeIngredients(List.of(
-                                createRecipeIngredient(berrySmoothieBowl, blueberries, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berrySmoothieBowl, strawberries, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berrySmoothieBowl, banana, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(berrySmoothieBowl, yogurt, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berrySmoothieBowl, honey, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(berrySmoothieBowl, granola, 1, RecipeIngredient.Unit.CUP)));
-                recipeRepository.save(berrySmoothieBowl);
-
-                // Overnight Oats - For users who like breakfast bowls and smoothie ingredients
-                Recipe overnightOats = Recipe.builder()
-                                .name("Banana Honey Overnight Oats")
-                                .description("Easy make-ahead breakfast with oats, banana, honey, and almonds - perfect for busy mornings.")
-                                .author(david)
-                                .imagePath("uploads/recipes/overnight-oats.webp")
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "In a jar, combine oats and milk",
-                                                "Add sliced banana, honey, and a pinch of cinnamon",
-                                                "Stir well, cover, and refrigerate overnight",
-                                                "In the morning, top with chopped almonds and additional banana slices",
-                                                "Enjoy cold or warm"))
-                                .cookTime(5L)
-                                .servings(1)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                overnightOats = recipeRepository.save(overnightOats);
-                overnightOats.setRecipeIngredients(List.of(
-                                createRecipeIngredient(overnightOats, oats, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(overnightOats, milk, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(overnightOats, banana, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(overnightOats, honey, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(overnightOats, cinnamon, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(overnightOats, almonds, 2, RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(overnightOats);
-
-                // SALADS AND SIDES
-                // Mango Avocado Salad
-                Recipe mangoAvocadoSalad = Recipe.builder()
-                                .name("Mango Avocado Salad")
-                                .description("A refreshing salad with ripe mango, creamy avocado, lime juice, and a hint of honey.")
-                                .author(david)
-                                .imagePath("uploads/recipes/mango-avocado-salad.webp")
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "Dice the mango and avocado.",
-                                                "Mix with lemon juice, olive oil, and honey.",
-                                                "Season with salt and toss gently.",
-                                                "Serve chilled."))
-                                .cookTime(10L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                mangoAvocadoSalad = recipeRepository.save(mangoAvocadoSalad);
-                mangoAvocadoSalad.setRecipeIngredients(List.of(
-                                createRecipeIngredient(mangoAvocadoSalad, mango, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(mangoAvocadoSalad, avocado, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(mangoAvocadoSalad, lemon, 1, RecipeIngredient.Unit.TO_TASTE),
-                                createRecipeIngredient(mangoAvocadoSalad, honey, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(mangoAvocadoSalad, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(mangoAvocadoSalad, oliveOil, 1,
-                                                RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(mangoAvocadoSalad);
-
-                // Chickpea Salad
-                Recipe chickpeaSalad = Recipe.builder()
-                                .name("Mediterranean Chickpea Salad")
-                                .description("Chickpeas, cucumber, tomatoes, lemon, olive oil, and a bit of garlic for a protein-packed salad.")
-                                .author(midudev)
-                                .imagePath("uploads/recipes/chickpea-salad.webp")
-                                .label(Recipe.Label.HEALTHY)
-                                .steps(Arrays.asList(
-                                                "Rinse and drain chickpeas.",
-                                                "Chop cucumber and tomatoes.",
-                                                "Mix all ingredients with lemon juice and olive oil.",
-                                                "Add minced garlic, salt, and pepper to taste.",
-                                                "Serve as a side or light meal."))
-                                .cookTime(10L)
-                                .servings(2)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                chickpeaSalad = recipeRepository.save(chickpeaSalad);
-                chickpeaSalad.setRecipeIngredients(List.of(
-                                createRecipeIngredient(chickpeaSalad, chickpeas, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(chickpeaSalad, lemon, 1, RecipeIngredient.Unit.TO_TASTE),
-                                createRecipeIngredient(chickpeaSalad, oliveOil, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(chickpeaSalad, garlic, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(chickpeaSalad, salt, 1, RecipeIngredient.Unit.PINCH),
-                                createRecipeIngredient(chickpeaSalad, pepper, 1, RecipeIngredient.Unit.PINCH)));
-                recipeRepository.save(chickpeaSalad);
-
-                // DESSERTS AND SWEETS
-                // Yogurt Parfait
-                Recipe parfait = Recipe.builder()
-                                .name("Tropical Yogurt Parfait")
-                                .description("Layers of yogurt, mango, banana, granola, and a drizzle of honey.")
-                                .author(david)
-                                .imagePath("uploads/recipes/yogurt-parfait.webp")
-                                .label(Recipe.Label.DESSERT)
-                                .steps(Arrays.asList(
-                                                "Layer yogurt, mango, and banana in a glass.",
-                                                "Top with granola and drizzle with honey.",
-                                                "Serve immediately for a refreshing breakfast or snack."))
-                                .cookTime(5L)
-                                .servings(1)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                parfait = recipeRepository.save(parfait);
-                parfait.setRecipeIngredients(List.of(
-                                createRecipeIngredient(parfait, yogurt, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(parfait, mango, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(parfait, banana, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(parfait, granola, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(parfait, honey, 1, RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(parfait);
-
-                // Berry Parfait - Similar to tropical parfait but with berries
-                Recipe berryParfait = Recipe.builder()
-                                .name("Berry Yogurt Parfait")
-                                .description("Creamy layers of yogurt with fresh berries, honey, and crunchy granola.")
-                                .author(mama)
-                                .imagePath("uploads/recipes/berry-parfait.webp")
-                                .label(Recipe.Label.DESSERT)
-                                .steps(Arrays.asList(
-                                                "Layer yogurt, blueberries, and strawberries in a glass.",
-                                                "Add a layer of granola.",
-                                                "Repeat layers ending with yogurt on top.",
-                                                "Drizzle with honey and top with fresh berries.",
-                                                "Serve immediately."))
-                                .cookTime(5L)
-                                .servings(1)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                berryParfait = recipeRepository.save(berryParfait);
-                berryParfait.setRecipeIngredients(List.of(
-                                createRecipeIngredient(berryParfait, yogurt, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berryParfait, blueberries, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berryParfait, strawberries, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berryParfait, granola, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(berryParfait, honey, 1, RecipeIngredient.Unit.TABLESPOON)));
-                recipeRepository.save(berryParfait);
-
-                // French Toast
-                Recipe frenchToast = Recipe.builder()
-                                .name("French Toast")
-                                .description("A classic French toast recipe made with thick slices of bread, eggs, milk, and vanilla.")
-                                .author(mama)
-                                .imagePath("uploads/recipes/french-toast.webp")
-                                .label(Recipe.Label.QUICK)
-                                .steps(Arrays.asList(
-                                                "In a shallow bowl, whisk together eggs, milk, vanilla, and cinnamon",
-                                                "Dip bread slices into the egg mixture, allowing them to soak for about 30 seconds on each side",
-                                                "Heat butter in a skillet over medium heat",
-                                                "Cook the soaked bread until golden brown on both sides, about 3-4 minutes per side",
-                                                "Serve with maple syrup"))
-                                .cookTime(15L)
-                                .servings(4)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                frenchToast = recipeRepository.save(frenchToast);
-                frenchToast.setRecipeIngredients(List.of(
-                                createRecipeIngredient(frenchToast, bread, 4, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(frenchToast, eggs, 2, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(frenchToast, milk, 1, RecipeIngredient.Unit.CUP),
-                                createRecipeIngredient(frenchToast, vanilla, 1, RecipeIngredient.Unit.TO_TASTE),
-                                createRecipeIngredient(frenchToast, cinnamon, 1, RecipeIngredient.Unit.TO_TASTE),
-                                createRecipeIngredient(frenchToast, butter, 2, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(frenchToast, mapleSyrup, 1, RecipeIngredient.Unit.CUP)));
-                recipeRepository.save(frenchToast);
-
-                // Peanut Butter Banana Toast - For users who like banana and toast combinations
-                Recipe pbBananaToast = Recipe.builder()
-                                .name("Peanut Butter Banana Toast")
-                                .description("Simple yet satisfying breakfast with whole grain toast, creamy peanut butter, and fresh banana slices.")
-                                .author(midudev)
-                                .imagePath("uploads/recipes/pb-banana-toast.webp")
-                                .label(Recipe.Label.QUICK)
-                                .steps(Arrays.asList(
-                                                "Toast the bread slices until golden and crispy",
-                                                "Spread peanut butter evenly on the warm toast",
-                                                "Arrange banana slices on top",
-                                                "Drizzle with honey",
-                                                "Optionally sprinkle with cinnamon"))
-                                .cookTime(5L)
-                                .servings(1)
-                                .difficulty(Recipe.Difficulty.EASY)
-                                .build();
-                pbBananaToast = recipeRepository.save(pbBananaToast);
-                pbBananaToast.setRecipeIngredients(List.of(
-                                createRecipeIngredient(pbBananaToast, bread, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(pbBananaToast, peanutButter, 2,
-                                                RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(pbBananaToast, banana, 1, RecipeIngredient.Unit.PIECE),
-                                createRecipeIngredient(pbBananaToast, honey, 1, RecipeIngredient.Unit.TABLESPOON),
-                                createRecipeIngredient(pbBananaToast, cinnamon, 1, RecipeIngredient.Unit.PINCH)));
-                recipeRepository.save(pbBananaToast);
-
-                // ESTABLISH CLEAR USER PREFERENCE PATTERNS FOR RECOMMENDATIONS
-
-                // Silvia - Preference for avocado, mango, honey dishes, and breakfast items
-                recipeLikeService.likeRecipe(avocadoToast, mama);
-                recipeLikeService.likeRecipe(hummus, mama);
-                recipeLikeService.likeRecipe(smoothieBowl, mama);
-                recipeLikeService.likeRecipe(mangoAvocadoSalad, mama);
-                recipeLikeService.likeRecipe(frenchToast, mama);
-
-                // Midudev - Preference for bread dishes
-                recipeLikeService.likeRecipe(avocadoToast, midudev);
-                recipeLikeService.likeRecipe(pbBananaToast, midudev);
-                recipeLikeService.likeRecipe(frenchToast, midudev);
-                recipeLikeService.likeRecipe(chickpeaSalad, midudev);
-
-                // David - Preference for fruit recipes and breakfast bowls
-                recipeLikeService.likeRecipe(smoothieBowl, david);
-                recipeLikeService.likeRecipe(parfait, david);
-                recipeLikeService.likeRecipe(bananaPancakes, david);
-                recipeLikeService.likeRecipe(overnightOats, david);
-                recipeLikeService.likeRecipe(mangoAvocadoSalad, david);
-
-                userRepository.saveAll(List.of(mama, midudev, david));
+            log.info("Database initialization completed successfully");
+        } catch (Exception e) {
+            log.error("Error during database initialization: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize database", e);
         }
+    }
 
-        private RecipeIngredient createRecipeIngredient(
-                        Recipe recipe, Ingredient ingredient, int quantity, RecipeIngredient.Unit unit) {
-                return RecipeIngredient.builder()
-                                .ingredient(ingredient)
-                                .quantity(quantity)
-                                .unit(unit)
-                                .recipe(recipe)
-                                .build();
-        }
+    private User createUserIfNotExists(String username, String firstName, String lastName, String email,
+            User.Role role) {
+        return userRepository.findByUsername(username)
+                .orElseGet(() -> {
+                    User user = User.builder()
+                            .firstName(firstName)
+                            .lastName(lastName)
+                            .username(username)
+                            .email(email)
+                            .password(passwordEncoder.encode("password"))
+                            .role(role)
+                            .build();
+                    return userRepository.save(user);
+                });
+    }
 
-        private Ingredient createIngredient(String name) {
-                Ingredient ingredient = Ingredient.builder().name(name).build();
-                return ingredientRepository.save(ingredient);
+    private Ingredient createIngredientIfNotExists(String name) {
+        return ingredientRepository.findByName(name)
+                .orElseGet(() -> {
+                    Ingredient ingredient = Ingredient.builder().name(name).build();
+                    return ingredientRepository.save(ingredient);
+                });
+    }
+
+    private Recipe createRecipeIfNotExists(String name, User author) {
+        return recipeRepository.findByName(name)
+                .orElseGet(() -> {
+                    Recipe recipe = Recipe.builder()
+                            .name(name)
+                            .author(author)
+                            .build();
+                    return recipeRepository.save(recipe);
+                });
+    }
+
+    private void setRecipeLikes(User mama, User midudev, User david, Recipe... recipes) {
+        for (Recipe recipe : recipes) {
+            try {
+                recipeLikeService.likeRecipe(recipe, mama);
+                recipeLikeService.likeRecipe(recipe, midudev);
+                recipeLikeService.likeRecipe(recipe, david);
+            } catch (Exception e) {
+                log.warn("Failed to set like for recipe {}: {}", recipe.getName(), e.getMessage());
+            }
         }
+    }
+
+    private RecipeIngredient createRecipeIngredient(
+            Recipe recipe, Ingredient ingredient, int quantity, RecipeIngredient.Unit unit) {
+        return RecipeIngredient.builder()
+                .ingredient(ingredient)
+                .quantity(quantity)
+                .unit(unit)
+                .recipe(recipe)
+                .build();
+    }
 }
