@@ -29,11 +29,20 @@ spring:
       password: ${SPRING_SECURITY_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}
+      ddl-auto: none # not needed because we're using SQL scripts
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true
   web:
     cors:
-      allowed-origins: "*" # TODO: Change to actual domain on prod
+      allowed-origins: "https://remixify.netlify.app"
       allowed-methods: GET,POST,PUT,DELETE,OPTIONS
       allowed-headers: Authorization,Content-Type,Accept,Origin,X-Requested-With
       allow-credentials: true
