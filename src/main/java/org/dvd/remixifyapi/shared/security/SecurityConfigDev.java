@@ -32,27 +32,8 @@ public class SecurityConfigDev {
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers("/api/auth/**")
-                                        .permitAll()
-                                        .requestMatchers("/h2-console/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/recipes/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/emails/**")
-                                        .permitAll()
-                                        .requestMatchers("/uploads/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/users/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/files/**")
-                                        .permitAll()
-                                        .requestMatchers(
-                                                "/swagger-ui/**",
-                                                "/v3/api-docs/**",
-                                                "/swagger-ui.html")
-                                        .permitAll()
-                                        .anyRequest()
-                                        .authenticated())
+                                auth.anyRequest()
+                                        .permitAll())
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

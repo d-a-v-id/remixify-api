@@ -32,16 +32,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers(HttpMethod.GET, "/api/recipes/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/auth/**")
-                                        .permitAll()
-                                        .requestMatchers("/api/recipes/**")
-                                        .permitAll()
-                                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
-                                        .permitAll()
-                                        .anyRequest()
-                                        .authenticated())
+                                auth.anyRequest()
+                                        .permitAll())
                 .headers(headers -> headers.frameOptions(frame -> frame.deny()))
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .sessionManagement(
