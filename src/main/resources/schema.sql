@@ -33,7 +33,7 @@ CREATE TABLE recipes (
     image_path VARCHAR(255) DEFAULT 'uploads/recipes/default-recipe.webp',
     author_id BIGINT NOT NULL,
     label VARCHAR(20),
-    steps TEXT,
+    steps TEXT[] DEFAULT ARRAY[]::TEXT[],
     cook_time BIGINT,
     servings INT,
     difficulty VARCHAR(20),
