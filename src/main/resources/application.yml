@@ -29,7 +29,7 @@ spring:
       password: ${SPRING_SECURITY_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: none # not needed because we're using SQL scripts
+      ddl-auto: none
     show-sql: false
     open-in-view: false
     properties:
