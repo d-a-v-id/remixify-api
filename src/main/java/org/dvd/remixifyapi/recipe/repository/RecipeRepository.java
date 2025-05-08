@@ -18,6 +18,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT r FROM Recipe r JOIN FETCH r.likedByUsers u WHERE u.id = :userId")
     List<Recipe> findRecipesLikedByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT r FROM Recipe r LEFT JOIN FETCH r.recipeIngredients ri LEFT JOIN FETCH ri.ingredient LEFT JOIN FETCH r.likedByUsers WHERE r.id = :id")
+    Optional<Recipe> findByIdWithRelationships(@Param("id") Long id);
+
     Page<Recipe> findByLabel(Label label, Pageable pageable);
 
     Page<Recipe> findByOrderByLikesDesc(Pageable pageable);

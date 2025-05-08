@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public User getUser(String username) {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsernameWithRecipes(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 

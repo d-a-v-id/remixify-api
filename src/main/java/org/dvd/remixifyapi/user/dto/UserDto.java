@@ -41,8 +41,4 @@ public class UserDto {
                 .avatarPath(userDto.getAvatarPath())
                 .build();
     }
-
-    public String getFullAvatarUrl() {
-        return FileStorageUtils.getFullAvatarImageUrl(this.avatarPath);
-    }
 }

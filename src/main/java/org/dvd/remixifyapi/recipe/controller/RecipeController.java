@@ -54,6 +54,7 @@ public class RecipeController {
     private final RecipeLikeService recipeLikeService;
 
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<PaginatedRecipeResponse> getAllRecipes(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size,
@@ -93,6 +94,7 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<RecipeDto> getRecipe(
             @PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         Optional<Recipe> recipeOpt = recipeService.getRecipeById(id);
@@ -105,6 +107,7 @@ public class RecipeController {
     }
 
     @PutMapping("/{recipeId}")
+    @Transactional
     public ResponseEntity<RecipeDto> updateRecipe(
             @PathVariable Long recipeId,
             @Valid @RequestBody Recipe recipe,
@@ -214,6 +217,7 @@ public class RecipeController {
     }
 
     @GetMapping("/likes")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDto>> getLikedRecipes(
             @AuthenticationPrincipal User currentUser) {
         if (currentUser == null) {
@@ -235,6 +239,7 @@ public class RecipeController {
     }
 
     @GetMapping("/category/{label}")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDto>> getRecipesByLabel(
             @PathVariable String label,
             @RequestParam(defaultValue = "10") int limit) {
@@ -254,6 +259,7 @@ public class RecipeController {
     }
 
     @GetMapping("/most-liked")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDto>> getMostLikedRecipes(
             @RequestParam(defaultValue = "10") int limit,
             @AuthenticationPrincipal User currentUser) {

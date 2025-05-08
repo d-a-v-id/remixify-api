@@ -39,7 +39,7 @@ public class RecipeService {
     }
 
     public Optional<Recipe> getRecipeById(Long id) {
-        return recipeRepository.findById(id);
+        return recipeRepository.findByIdWithRelationships(id);
     }
 
     public Recipe saveRecipe(Recipe recipe) {
