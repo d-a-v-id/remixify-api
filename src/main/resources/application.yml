@@ -74,6 +74,8 @@ logging:
     org.dvd.remixifyapi: DEBUG
     org.springframework.web: INFO
     org.hibernate: INFO
+    org.springframework.security: DEBUG
+    org.dvd.remixifyapi.shared.exception: DEBUG
 
 
 # AWS Configuration
