@@ -6,6 +6,7 @@ import org.dvd.remixifyapi.shared.security.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,6 +32,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth ->
                                 auth.requestMatchers("/api/auth/**").permitAll()
+                                    // Public endpoints
+                                    .requestMatchers(HttpMethod.GET, "/api/recipes/**").permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/api/ingredients/**").permitAll()
+                                    // Protected endpoints
+                                    .requestMatchers(HttpMethod.POST, "/api/recipes/**").authenticated()
+                                    .requestMatchers(HttpMethod.PUT, "/api/recipes/**").authenticated()
+                                    .requestMatchers(HttpMethod.DELETE, "/api/recipes/**").authenticated()
+                                    .requestMatchers(HttpMethod.POST, "/api/users/**").authenticated()
+                                    .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
+                                    .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
                                     .anyRequest().authenticated())
                 .headers(headers -> headers.frameOptions(frame -> frame.deny()))
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
