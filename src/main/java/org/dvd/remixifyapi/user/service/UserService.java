@@ -80,7 +80,7 @@ public class UserService {
     }
 
     public List<Recipe> getLikedRecipesByUsername(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepository.findByUsernameWithLikedRecipes(username);
         if (userOpt.isEmpty()) {
             throw new NoSuchElementException("User not found");
         }

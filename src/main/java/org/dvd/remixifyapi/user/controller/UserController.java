@@ -15,6 +15,7 @@ import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -82,6 +83,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}/likes")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RecipeDto>> getUserLikedRecipes(@PathVariable String username) {
         try {
             List<Recipe> likedRecipes = userService.getLikedRecipesByUsername(username);

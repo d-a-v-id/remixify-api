@@ -14,7 +14,7 @@ import org.dvd.remixifyapi.recipe.model.RecipeIngredient;
 import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.recipe.service.RecipeService;
-import org.dvd.remixifyapi.storage.service.FileStorageService;
+import org.dvd.remixifyapi.storage.service.StorageService;
 import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
 import org.springframework.data.domain.Page;
@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RecipeController {
 
     private final RecipeService recipeService;
-    private final FileStorageService fileStorageService;
+    private final StorageService storageService;
     private final IngredientRepository ingredientRepository;
     private final RecipeLikeService recipeLikeService;
 
@@ -201,8 +201,7 @@ public class RecipeController {
             recipe.setRecipeIngredients(ingredients);
 
             if (image != null && !image.isEmpty()) {
-                String imagePath =
-                        fileStorageService.storeFile(image, FileStorageUtils.RECIPES_PATH);
+                String imagePath = storageService.uploadFile(image, StorageService.FileType.RECIPE);
                 recipe.setImagePath(imagePath);
             }
 

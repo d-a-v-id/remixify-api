@@ -16,5 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.recipes WHERE u.username = :username")
     Optional<User> findByUsernameWithRecipes(@Param("username") String username);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.likedRecipes WHERE u.username = :username")
+    Optional<User> findByUsernameWithLikedRecipes(@Param("username") String username);
 }
 
