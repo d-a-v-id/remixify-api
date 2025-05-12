@@ -1,19 +1,21 @@
 -- Clear existing data
-DELETE FROM recipe_likes;
-DELETE FROM user_preferred_ingredients;
-DELETE FROM recipe_ingredients;
-DELETE FROM recipes;
-DELETE FROM ingredients;
-DELETE FROM users;
+TRUNCATE TABLE
+  recipe_likes,
+  user_preferred_ingredients,
+  recipe_ingredients,
+  recipes,
+  ingredients,
+  users
+CASCADE;
 
 -- Insert users with different preferences
 INSERT INTO users (id, first_name, last_name, username, email, password, role, created_at, avatar_path)
 VALUES
-    (1, 'David', 'Santos', 'david', 'dqvid01@gmail.com', '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG', 'USER', 1704067200000, '/uploads/avatars/default-avatar.png'),
-    (2, 'Silvia', 'García', 'silvia', 'silvia@gmail.com', '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG', 'USER', 1704067200000, '/uploads/avatars/default-avatar.png'),
-    (3, 'Iván', 'Santos', 'ivan', 'ivan@gmail.com', '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG', 'USER', 1704067200000, '/uploads/avatars/default-avatar.png'),
-    (4, 'Miguel A.', 'Durán', 'midudev', 'midudev@gmail.com', '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG', 'USER', 1704067200000, '/uploads/avatars/default-avatar.png'),
-    (5, 'Admin', 'Admin', 'admin', 'admin@example.com', '$2a$10$xn3LI/AjqicFYZFruSwve.681477XaVNaUQbr1gioaWPn4t1KsnmG', 'ADMIN', 1704067200000, '/uploads/avatars/default-avatar.png');
+    (1, 'David', 'Santos', 'david', 'dqvid01@gmail.com', '$2a$10$lQ1XaYzNa78r.yqP16fcN.bG6LAsVUZ/ugRZTdAnTii7RhMHXkdIG', 'USER', 1704067200000, 'uploads/avatars/default-avatar.webp'),
+    (2, 'Silvia', 'García', 'silvia', 'silvia@gmail.com', '$2a$10$lQ1XaYzNa78r.yqP16fcN.bG6LAsVUZ/ugRZTdAnTii7RhMHXkdIG', 'USER', 1704067200000, 'uploads/avatars/default-avatar.webp'),
+    (3, 'Iván', 'Santos', 'ivan', 'ivan@gmail.com', '$2a$10$lQ1XaYzNa78r.yqP16fcN.bG6LAsVUZ/ugRZTdAnTii7RhMHXkdIG', 'USER', 1704067200000, 'uploads/avatars/default-avatar.webp'),
+    (4, 'Miguel A.', 'Durán', 'midudev', 'midudev@gmail.com', '$2a$10$lQ1XaYzNa78r.yqP16fcN.bG6LAsVUZ/ugRZTdAnTii7RhMHXkdIG', 'USER', 1704067200000, 'uploads/avatars/default-avatar.webp'),
+    (5, 'Admin', 'Admin', 'admin', 'admin@example.com', '$2a$10$lQ1XaYzNa78r.yqP16fcN.bG6LAsVUZ/ugRZTdAnTii7RhMHXkdIG', 'ADMIN', 1704067200000, 'uploads/avatars/default-avatar.webp');
 
 -- Insert ingredients
 INSERT INTO ingredients (id, name)
@@ -58,14 +60,14 @@ VALUES
     (3, 'Banana Pancakes', 'Fluffy pancakes with caramelized bananas', 'uploads/recipes/banana-pancakes.webp', 20, 2, 0, 3, 'MEDIUM', 'DESSERT'),
     (4, 'Berry Parfait', 'Layered yogurt parfait with fresh berries and granola', 'uploads/recipes/berry-parfait.webp', 10, 1, 0, 4, 'EASY', 'HEALTHY'),
     (5, 'Berry Smoothie Bowl', 'Thick and creamy smoothie bowl topped with fresh berries', 'uploads/recipes/berry-smoothie-bowl.webp', 15, 1, 0, 5, 'EASY', 'HEALTHY'),
-    
+
     -- Lunch/Dinner Category
     (6, 'Chickpea Salad', 'Protein-rich salad with fresh vegetables', 'uploads/recipes/chickpea-salad.webp', 15, 2, 0, 1, 'EASY', 'VEGAN'),
     (7, 'Floral Hummus', 'Creamy hummus with a beautiful floral presentation', 'uploads/recipes/floral-hummus.webp', 20, 4, 0, 2, 'EASY', 'VEGAN'),
     (8, 'French Toast', 'Classic French toast with maple syrup', 'uploads/recipes/french-toast.webp', 20, 2, 0, 3, 'MEDIUM', 'DESSERT'),
     (9, 'Lentil Stew', 'Hearty and nutritious lentil stew', 'uploads/recipes/lentil-stew.webp', 45, 4, 0, 4, 'MEDIUM', 'HEALTHY'),
     (10, 'Mango Avocado Salad', 'Refreshing tropical salad with mango and avocado', 'uploads/recipes/mango-avocado-salad.webp', 15, 2, 0, 5, 'EASY', 'VEGAN'),
-    
+
     -- Breakfast Category (continued)
     (11, 'Overnight Oats', 'Make-ahead breakfast with endless topping possibilities', 'uploads/recipes/overnight-oats.webp', 5, 1, 0, 1, 'EASY', 'HEALTHY'),
     (12, 'Classic Pancakes', 'Fluffy and delicious traditional pancakes', 'uploads/recipes/pancakes.webp', 20, 2, 0, 2, 'MEDIUM', 'DESSERT'),
@@ -78,35 +80,35 @@ VALUES
 INSERT INTO recipe_ingredients (id, recipe_id, ingredient_id, quantity, unit)
 VALUES
     -- Avocado Toast
-    (1, 1, 1, '1', 'PIECE'),
-    (2, 1, 2, '2', 'SLICES'),
-    (3, 1, 15, '1', 'TABLESPOON'),
-    (4, 1, 16, '1', 'PINCH'),
-    
+    (1, 1, 1, 1, 'PIECE'),
+    (2, 1, 2, 2, 'PIECE'),
+    (3, 1, 15, 1, 'TABLESPOON'),
+    (4, 1, 16, 1, 'PINCH'),
+
     -- Avocado Egg Toast
-    (5, 2, 1, '1', 'PIECE'),
-    (6, 2, 2, '2', 'SLICES'),
-    (7, 2, 3, '2', 'PIECES'),
-    (8, 2, 15, '1', 'TABLESPOON'),
-    
+    (5, 2, 1, 1, 'PIECE'),
+    (6, 2, 2, 2, 'PIECE'),
+    (7, 2, 3, 2, 'PIECE'),
+    (8, 2, 15, 1, 'TABLESPOON'),
+
     -- Banana Pancakes
-    (9, 3, 4, '2', 'PIECES'),
-    (10, 3, 24, '200', 'GRAMS'),
-    (11, 3, 25, '2', 'TEASPOONS'),
-    (12, 3, 26, '2', 'TABLESPOONS'),
-    (13, 3, 9, '250', 'ML'),
-    
+    (9, 3, 4, 2, 'PIECE'),
+    (10, 3, 24, 200, 'GRAM'),
+    (11, 3, 25, 2, 'TABLESPOON'),
+    (12, 3, 26, 2, 'TABLESPOON'),
+    (13, 3, 9, 250, 'MILLILITER'),
+
     -- Berry Parfait
-    (14, 4, 6, '200', 'GRAMS'),
-    (15, 4, 7, '100', 'GRAMS'),
-    (16, 4, 23, '50', 'GRAMS'),
-    (17, 4, 10, '1', 'TABLESPOON'),
-    
+    (14, 4, 6, 200, 'GRAM'),
+    (15, 4, 7, 100, 'GRAM'),
+    (16, 4, 23, 50, 'GRAM'),
+    (17, 4, 10, 1, 'TABLESPOON'),
+
     -- Berry Smoothie Bowl
-    (18, 5, 7, '150', 'GRAMS'),
-    (19, 5, 6, '100', 'GRAMS'),
-    (20, 5, 9, '100', 'ML'),
-    (21, 5, 10, '1', 'TABLESPOON');
+    (18, 5, 7, 150, 'GRAM'),
+    (19, 5, 6, 100, 'GRAM'),
+    (20, 5, 9, 100, 'MILLILITER'),
+    (21, 5, 10, 1, 'TABLESPOON');
 
 -- Set user preferences (each user has distinct preferences)
 INSERT INTO user_preferred_ingredients (user_id, ingredient_id)
@@ -116,25 +118,25 @@ VALUES
     (1, 6),  -- Yogurt
     (1, 8),  -- Oats
     (1, 7),  -- Berries
-    
+
     -- Silvia (Vegan and healthy)
     (2, 1),  -- Avocado
     (2, 11), -- Chickpeas
     (2, 21), -- Lentils
     (2, 20), -- White Beans
-    
+
     -- Iván (Sweet tooth)
     (3, 4),  -- Banana
     (3, 5),  -- Peanut Butter
     (3, 19), -- Maple Syrup
     (3, 26), -- Sugar
-    
+
     -- Miguel (Quick meals)
     (4, 2),  -- Bread
     (4, 3),  -- Eggs
     (4, 8),  -- Oats
     (4, 23), -- Granola
-    
+
     -- Admin (Balanced diet)
     (5, 1),  -- Avocado
     (5, 6),  -- Yogurt
@@ -148,22 +150,22 @@ VALUES
     (1, 1),  -- Avocado Toast
     (1, 4),  -- Berry Parfait
     (1, 11), -- Overnight Oats
-    
+
     -- Silvia likes vegan dishes
     (2, 6),  -- Chickpea Salad
     (2, 7),  -- Floral Hummus
     (2, 10), -- Mango Avocado Salad
-    
+
     -- Iván likes sweet breakfasts
     (3, 3),  -- Banana Pancakes
     (3, 8),  -- French Toast
     (3, 12), -- Classic Pancakes
-    
+
     -- Miguel likes quick meals
     (4, 1),  -- Avocado Toast
     (4, 13), -- PB Banana Toast
     (4, 16), -- Yogurt Parfait
-    
+
     -- Admin likes healthy options
     (5, 2),  -- Avocado Egg Toast
     (5, 5),  -- Berry Smoothie Bowl
@@ -185,4 +187,4 @@ UPDATE recipes SET likes = 1 WHERE id = 12; -- Classic Pancakes
 UPDATE recipes SET likes = 1 WHERE id = 13; -- PB Banana Toast
 UPDATE recipes SET likes = 0 WHERE id = 14; -- Smoothie Bowl
 UPDATE recipes SET likes = 0 WHERE id = 15; -- White Bean Dip
-UPDATE recipes SET likes = 1 WHERE id = 16; -- Yogurt Parfait 
+UPDATE recipes SET likes = 1 WHERE id = 16; -- Yogurt Parfait
