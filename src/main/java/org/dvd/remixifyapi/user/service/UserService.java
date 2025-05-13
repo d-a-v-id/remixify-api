@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public User getUser(String username) {
-        return userRepository.findByUsernameWithLikedRecipes(username)
+        return userRepository.findByUsernameWithRecipes(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
@@ -80,7 +80,7 @@ public class UserService {
     }
 
     public List<Recipe> getLikedRecipesByUsername(String username) {
-        Optional<User> userOpt = userRepository.findByUsernameWithLikedRecipes(username);
+        Optional<User> userOpt = userRepository.findByUsernameWithRecipes(username);
         if (userOpt.isEmpty()) {
             throw new NoSuchElementException("User not found");
         }

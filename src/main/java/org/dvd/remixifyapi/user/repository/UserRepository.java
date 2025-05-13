@@ -15,13 +15,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.recipes WHERE u.username = :username")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.recipes LEFT JOIN FETCH u.likedRecipes WHERE u.username = :username")
     Optional<User> findByUsernameWithRecipes(@Param("username") String username);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.likedRecipes WHERE u.username = :username")
     Optional<User> findByUsernameWithLikedRecipes(@Param("username") String username);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.recipes")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.recipes LEFT JOIN FETCH u.likedRecipes")
     List<User> findAllWithRecipes();
 }
 
