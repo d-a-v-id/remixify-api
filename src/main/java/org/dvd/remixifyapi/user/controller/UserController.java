@@ -112,13 +112,13 @@ public class UserController {
                         .body(Map.of("message", "Please upload an image file"));
             }
 
-            // Delete old avatar if it exists
+            // Delete old avatar ONLY if it's not the default one
             User user = userService.getUser(username);
-            if (user.getAvatarPath() != null && !user.getAvatarPath().isEmpty()) {
+            if (user.getAvatarPath() != null && !user.getAvatarPath().isEmpty()
+                    && !user.getAvatarPath().equals(FileStorageUtils.DEFAULT_AVATAR_PATH)) {
                 storageService.deleteFile(user.getAvatarPath());
             }
 
-            // Upload new avatar
             String avatarPath = storageService.uploadFile(image, StorageService.FileType.AVATAR);
             userService.updateUserAvatarPath(username, avatarPath);
 

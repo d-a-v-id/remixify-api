@@ -15,7 +15,6 @@ import org.dvd.remixifyapi.recipe.repository.IngredientRepository;
 import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.recipe.service.RecipeService;
 import org.dvd.remixifyapi.storage.service.StorageService;
-import org.dvd.remixifyapi.storage.util.FileStorageUtils;
 import org.dvd.remixifyapi.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
