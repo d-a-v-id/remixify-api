@@ -23,6 +23,9 @@ public class RecipeService {
     private final IngredientRepository ingredientRepository;
 
     public Page<Recipe> getAllRecipes(Pageable pageable, String label, List<String> ingredients, String author) {
+        if (label != null && !label.isEmpty() && author != null && !author.isEmpty()) {
+            return recipeRepository.findByAuthorAndLabel(author, Label.valueOf(label.toUpperCase()), pageable);
+        }
         if (label != null && !label.isEmpty()) {
             return recipeRepository.findByLabel(Label.valueOf(label.toUpperCase()), pageable);
         }
@@ -56,14 +59,13 @@ public class RecipeService {
             user.getLikedRecipes().remove(recipe);
         });
         recipe.getLikedByUsers().clear();
-        
+
         recipe.getRecipeIngredients().clear();
-        
+
         recipeRepository.save(recipe);
-        
+
         recipeRepository.delete(recipe);
     }
-
 
     public List<String> getAllIngredients() {
         return ingredientRepository.findAll().stream()

@@ -34,4 +34,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT DISTINCT r FROM Recipe r JOIN r.author a WHERE LOWER(a.username) = LOWER(:author)")
     Page<Recipe> findByAuthor(String author, Pageable pageable);
+
+    @Query("SELECT DISTINCT r FROM Recipe r " +
+           "LEFT JOIN r.author a " +
+           "WHERE (:author IS NULL OR LOWER(a.username) = LOWER(:author)) " +
+           "AND (:label IS NULL OR r.label = :label)")
+    Page<Recipe> findByAuthorAndLabel(@Param("author") String author, @Param("label") Label label, Pageable pageable);
 }
