@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.dvd.remixifyapi.recipe.model.Recipe;
 import org.dvd.remixifyapi.recipe.model.RecipeIngredient;
@@ -20,6 +21,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +58,7 @@ public class ContentBasedRecommendationService implements RecommendationService 
     }
 
     @Override
+    @Transactional(readOnly = true)
     @Cacheable("recommendations")
     public RecommendationResponse recommend(String username, int limit) {
         User user = userRepository.findByUsernameWithRecipes(username)
@@ -77,13 +80,38 @@ public class ContentBasedRecommendationService implements RecommendationService 
             return new RecommendationResponse(Collections.emptyList(), new Stats(0, 0, 0));
         }
 
-        List<Recipe> recipes = recipeRepository.findAll();
+        Set<String> userLikedIngredients = userLikes.stream()
+                .flatMap(likedRecipe -> likedRecipe.getRecipeIngredients().stream())
+                .map(ri -> ri.getIngredient().getName().toLowerCase())
+                .collect(Collectors.toSet());
+
+        List<Recipe> recipes = recipeRepository.findAllWithIngredients();
         List<RecommendationDto> recommendations = recipes.stream()
                 .filter(recipe -> !userLikes.contains(recipe))
                 .map(recipe -> {
                     double[] recipeVector = recipeVectors.get(recipe.getId());
                     double score = recipeVector != null ? cosine(userProfile, recipeVector) : 0.0;
-                    return new RecommendationDto(recipe.getId(), recipe.getName(), score);
+                    
+                    List<String> commonIngredients = recipe.getRecipeIngredients().stream()
+                            .map(ri -> ri.getIngredient().getName().toLowerCase())
+                            .filter(userLikedIngredients::contains)
+                            .collect(Collectors.toList());
+                    
+                    String explanation;
+                    if (!commonIngredients.isEmpty()) {
+                        explanation = String.format("You might like this because you've enjoyed recipes with %s", 
+                            String.join(", ", commonIngredients));
+                    } else {
+                        explanation = "Based on your taste profile, you might enjoy this recipe";
+                    }
+                    
+                    return new RecommendationDto(
+                        recipe.getId(), 
+                        recipe.getName(), 
+                        score,
+                        commonIngredients,
+                        explanation
+                    );
                 })
                 .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
                 .limit(limit)
