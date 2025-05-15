@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
     Optional<User> findByEmail(String email);
 
@@ -19,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameWithRecipes(@Param("username") String username);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.likedRecipes WHERE u.username = :username")
-    Optional<User> findByUsernameWithLikedRecipes(@Param("username") String username);
+    Optional<User> findByUsername(@Param("username") String username);
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.recipes LEFT JOIN FETCH u.likedRecipes")
     List<User> findAllWithRecipes();

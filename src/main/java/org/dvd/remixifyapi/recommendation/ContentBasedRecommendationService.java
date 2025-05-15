@@ -58,7 +58,7 @@ public class ContentBasedRecommendationService implements RecommendationService 
     @Override
     @Cacheable("recommendations")
     public RecommendationResponse recommend(String username, int limit) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameWithRecipes(username)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
         Set<Recipe> userLikes = user.getLikedRecipes();

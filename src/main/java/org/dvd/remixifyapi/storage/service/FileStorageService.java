@@ -141,11 +141,12 @@ public class FileStorageService {
     }
 
     public String getAvatarImageUrl(String username) {
-        String url = RECIPES_DIR + "/" + username + ".jpg";
-        if (!Files.exists(Path.of(url))) {
+        User user = userService.getUser(username);
+        if (user.getAvatarPath() == null || user.getAvatarPath().isEmpty()) {
             return DEFAULT_AVATAR;
         }
-        return url;
+        
+        return user.getAvatarPath();
     }
 
     public String getRecipeImageUrl(Long recipeId) {
@@ -154,11 +155,6 @@ public class FileStorageService {
             return DEFAULT_RECIPE;
         }
 
-        String url = recipe.get().getImagePath();
-        if (!Files.exists(Path.of(url))) {
-            return DEFAULT_RECIPE;
-        }
-
-        return url;
+        return recipe.get().getImagePath();
     }
 }
