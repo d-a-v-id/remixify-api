@@ -55,16 +55,17 @@ public class RecipeService {
 
     @Transactional
     public void deleteRecipe(Recipe recipe) {
-        recipe.getLikedByUsers().forEach(user -> {
-            user.getLikedRecipes().remove(recipe);
+        Recipe recipeToDelete = recipeRepository.findByIdWithRelationships(recipe.getId())
+                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        recipeToDelete.getLikedByUsers().forEach(user -> {
+            user.getLikedRecipes().remove(recipeToDelete);
         });
-        recipe.getLikedByUsers().clear();
+        recipeToDelete.getLikedByUsers().clear();
 
-        recipe.getRecipeIngredients().clear();
-
-        recipeRepository.save(recipe);
-
-        recipeRepository.delete(recipe);
+        recipeToDelete.getRecipeIngredients().clear();
+        recipeRepository.save(recipeToDelete);
+        recipeRepository.delete(recipeToDelete);
     }
 
     public List<String> getAllIngredients() {

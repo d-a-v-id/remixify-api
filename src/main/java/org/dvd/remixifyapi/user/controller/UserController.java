@@ -57,12 +57,11 @@ public class UserController {
     public ResponseEntity<Map<String, String>> createUser(@Valid @RequestBody User user) {
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(
-                        Map.of(
-                                "message",
-                                "User created successfully",
-                                "username",
-                                user.getUsername()));
+                .body(Map.of(
+                        "message",
+                        "User created successfully",
+                        "username",
+                        user.getUsername()));
     }
 
     @PatchMapping("/{username}")

@@ -53,7 +53,7 @@ public class ContentBasedRecommendationService implements RecommendationService 
 
         ingredientVectorSize = ingredientIndexMap.size();
         for (Recipe recipe : recipeRepository.findAllWithIngredients()) {
-            recipeVectors.put(recipe.getId(), computeVector(recipe));
+            recipeVectors.put(recipe.getId(), computeVector(recipe)); 
         }
     }
 
@@ -90,28 +90,31 @@ public class ContentBasedRecommendationService implements RecommendationService 
                 .filter(recipe -> !userLikes.contains(recipe))
                 .map(recipe -> {
                     double[] recipeVector = recipeVectors.get(recipe.getId());
-                    double score = recipeVector != null ? cosine(userProfile, recipeVector) : 0.0;
-                    
+                    double score = recipeVector != null
+                        ? cosine(userProfile, recipeVector)
+                        : 0.0;
+
                     List<String> commonIngredients = recipe.getRecipeIngredients().stream()
                             .map(ri -> ri.getIngredient().getName().toLowerCase())
                             .filter(userLikedIngredients::contains)
                             .collect(Collectors.toList());
-                    
+
                     String explanation;
                     if (!commonIngredients.isEmpty()) {
-                        explanation = String.format("You might like this because you've enjoyed recipes with %s", 
-                            String.join(", ", commonIngredients));
+                        explanation = String.format("You might like this because you've enjoyed recipes with %s",
+                                String.join(", ", commonIngredients));
+                    } else if (score < 0.3) {
+                        explanation = "We couldn't find a perfect match, but this recipe has some new ingredients you might like";
                     } else {
                         explanation = "Based on your taste profile, you might enjoy this recipe";
                     }
-                    
+
                     return new RecommendationDto(
-                        recipe.getId(), 
-                        recipe.getName(), 
-                        score,
-                        commonIngredients,
-                        explanation
-                    );
+                            recipe.getId(),
+                            recipe.getName(),
+                            score,
+                            commonIngredients,
+                            explanation);
                 })
                 .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
                 .limit(limit)

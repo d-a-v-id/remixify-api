@@ -10,6 +10,7 @@ import org.dvd.remixifyapi.user.dto.UserDto;
 import org.dvd.remixifyapi.user.model.User;
 import org.dvd.remixifyapi.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAllWithRecipes();
@@ -34,6 +36,7 @@ public class UserService {
         user.setFirstName(user.getFirstName().trim());
         user.setLastName(user.getLastName().trim());
         user.setEmail(user.getEmail().trim());
+        user.setPassword(passwordEncoder.encode(user.getPassword().trim()));
 
         return userRepository.save(user);
     }
