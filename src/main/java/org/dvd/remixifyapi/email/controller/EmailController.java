@@ -1,5 +1,6 @@
 package org.dvd.remixifyapi.email.controller;
 
+import org.dvd.remixifyapi.email.dto.ContactFormRequest;
 import org.dvd.remixifyapi.email.dto.EmailRequestDto;
 import org.dvd.remixifyapi.email.dto.EmailResponseDto;
 import org.dvd.remixifyapi.email.service.EmailService;
@@ -35,6 +36,22 @@ public class EmailController {
                 .messageId(messageId)
                 .status("sent")
                 .recipient(emailRequest.getTo())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/contact")
+    public ResponseEntity<EmailResponseDto> sendContactEmail(
+            @Validated @RequestBody ContactFormRequest contactForm) {
+        log.debug("Sending contact email from {}", contactForm.getEmail());
+
+        String messageId = emailService.sendContactEmail(contactForm);
+
+        EmailResponseDto response = EmailResponseDto.builder()
+                .messageId(messageId)
+                .status("sent")
+                .recipient(contactForm.getEmail())
                 .build();
 
         return ResponseEntity.ok(response);

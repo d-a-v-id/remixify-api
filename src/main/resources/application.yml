@@ -13,6 +13,7 @@ app:
     enabled: true # if true, emails will be sent. Otherwise, they will be logged
     apiKey: ${EMAIL_API_KEY}
     from: Remixify <noreply@resend.dev>
+    contact-email: dqvid01@gmail.com
   base-url: ${BASE_URL:http://localhost:8080}
 
 

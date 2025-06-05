@@ -2,6 +2,7 @@ package org.dvd.remixifyapi.email.service;
 
 import java.util.Map;
 
+import org.dvd.remixifyapi.email.dto.ContactFormRequest;
 import org.dvd.remixifyapi.shared.config.AppProperties;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -55,5 +56,17 @@ public class EmailService {
             log.error("Failed to send email: {}", e.getMessage());
             throw new RuntimeException("Failed to send email", e);
         }
+    }
+
+    public String sendContactEmail(ContactFormRequest contactForm) {
+        String html = """
+                <p>Name: %s</p>
+                <p>Email: %s</p>
+                <p>Subject: %s</p>
+                <p>Message: %s</p>
+                """.formatted(contactForm.getName(), contactForm.getEmail(), contactForm.getSubject(),
+                contactForm.getMessage());
+
+        return sendEmail(appProperties.getEmail().getContactEmail(), "Contact Form Submission", html);
     }
 }

@@ -3,6 +3,7 @@ package org.dvd.remixifyapi.shared.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
+
 import lombok.Data;
 
 @Data
@@ -42,5 +43,6 @@ public class AppProperties {
         private String apiKey;
         private String from;
         private boolean enabled;
+        private String contactEmail;
     }
 }
