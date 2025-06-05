@@ -70,7 +70,8 @@ public class Recipe {
     private User author;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RecipeIngredient> recipeIngredients;
+    @Builder.Default
+    private Set<RecipeIngredient> recipeIngredients = new HashSet<>();
 
     @ManyToMany(mappedBy = "likedRecipes")
     @Builder.Default

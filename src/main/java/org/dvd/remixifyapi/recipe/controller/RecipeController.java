@@ -1,8 +1,9 @@
 package org.dvd.remixifyapi.recipe.controller;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dvd.remixifyapi.recipe.dto.PaginatedRecipeResponse;
@@ -181,7 +182,7 @@ public class RecipeController {
                             .likes(0L)
                             .build();
 
-            List<RecipeIngredient> ingredients = new ArrayList<>();
+            Set<RecipeIngredient> ingredients = new HashSet<>();
             for (RecipeDto.IngredientDto ingredientDto : recipeRequest.getIngredients()) {
                 RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
