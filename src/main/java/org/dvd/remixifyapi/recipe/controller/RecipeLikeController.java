@@ -4,12 +4,14 @@ import java.util.Optional;
 
 import org.dvd.remixifyapi.recipe.dto.RecipeDto;
 import org.dvd.remixifyapi.recipe.model.Recipe;
+import org.dvd.remixifyapi.recipe.repository.RecipeRepository;
 import org.dvd.remixifyapi.recipe.service.RecipeLikeService;
 import org.dvd.remixifyapi.recipe.service.RecipeService;
 import org.dvd.remixifyapi.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +29,10 @@ public class RecipeLikeController {
 
     private final RecipeService recipeService;
     private final RecipeLikeService recipeLikeService;
+    private final RecipeRepository recipeRepository;
 
     @PostMapping("/{recipeId}/likes")
+    @Transactional
     public ResponseEntity<RecipeDto> likeRecipe(
             @PathVariable Long recipeId, @AuthenticationPrincipal User currentUser) {
 
@@ -37,7 +41,7 @@ public class RecipeLikeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Optional<Recipe> recipeOpt = recipeService.getRecipeById(recipeId);
+        Optional<Recipe> recipeOpt = recipeService.getRecipeByIdWithRelationships(recipeId);
         if (recipeOpt.isEmpty()) {
             log.warn("Recipe with id {} not found", recipeId);
             return ResponseEntity.notFound().build();

@@ -25,7 +25,7 @@ public class RecipeLikeService {
                         .findById(user.getId())
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Recipe freshRecipe = recipeRepository.findById(recipe.getId())
+        Recipe freshRecipe = recipeRepository.findByIdWithRelationships(recipe.getId())
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
 
         if (!freshRecipe.getLikedByUsers().contains(freshUser)) {
