@@ -66,13 +66,13 @@ public class RecipeController {
         if (zeroBasedPage < 0) {
             zeroBasedPage = 0;
         }
-        
+
         Page<Recipe> recipes = recipeService.getAllRecipes(
                 PageRequest.of(zeroBasedPage, size),
                 label,
                 ingredients,
                 author);
-        
+
         List<RecipeDto> recipeDtos = recipes.getContent().stream()
                 .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
                 .toList();
@@ -143,7 +143,7 @@ public class RecipeController {
         Recipe recipe = recipeOptional.get();
         boolean isAdmin = currentUser.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        
+
         if (!recipe.getAuthor().getId().equals(currentUser.getId()) && !isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -162,33 +162,31 @@ public class RecipeController {
             if (currentUser == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-            
+
             ObjectMapper objectMapper = new ObjectMapper();
             RecipeDto recipeRequest = objectMapper.readValue(recipeJson, RecipeDto.class);
 
-            Recipe recipe =
-                    Recipe.builder()
-                            .name(recipeRequest.getName())
-                            .description(recipeRequest.getDescription())
-                            .author(currentUser)
-                            .steps(recipeRequest.getSteps())
-                            .label(
-                                    recipeRequest.getLabel() != null
-                                            ? Recipe.Label.valueOf(recipeRequest.getLabel())
-                                            : null)
-                            .cookTime(recipeRequest.getCookTime())
-                            .servings(recipeRequest.getServings())
-                            .difficulty(Recipe.Difficulty.valueOf(recipeRequest.getDifficulty()))
-                            .likes(0L)
-                            .build();
+            Recipe recipe = Recipe.builder()
+                    .name(recipeRequest.getName())
+                    .description(recipeRequest.getDescription())
+                    .author(currentUser)
+                    .steps(recipeRequest.getSteps())
+                    .label(
+                            recipeRequest.getLabel() != null
+                                    ? Recipe.Label.valueOf(recipeRequest.getLabel())
+                                    : null)
+                    .cookTime(recipeRequest.getCookTime())
+                    .servings(recipeRequest.getServings())
+                    .difficulty(Recipe.Difficulty.valueOf(recipeRequest.getDifficulty()))
+                    .likes(0L)
+                    .build();
 
             Set<RecipeIngredient> ingredients = new HashSet<>();
             for (RecipeDto.IngredientDto ingredientDto : recipeRequest.getIngredients()) {
                 RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
 
-                Optional<Ingredient> ingredientOpt =
-                        ingredientRepository.findById(ingredientDto.getId());
+                Optional<Ingredient> ingredientOpt = ingredientRepository.findById(ingredientDto.getId());
                 if (ingredientOpt.isEmpty()) {
                     return ResponseEntity.badRequest().body(null);
                 }
@@ -229,10 +227,9 @@ public class RecipeController {
             return ResponseEntity.noContent().build();
         }
 
-        List<RecipeDto> likedRecipesDto =
-                likedRecipes.stream()
-                        .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
-                        .collect(Collectors.toList());
+        List<RecipeDto> likedRecipesDto = likedRecipes.stream()
+                .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(likedRecipesDto);
     }
@@ -245,11 +242,11 @@ public class RecipeController {
         try {
             Label recipeLabel = Label.valueOf(label.toUpperCase());
             List<Recipe> recipes = recipeService.getRecipesByLabel(recipeLabel, limit);
-            
+
             List<RecipeDto> recipeDtos = recipes.stream()
                     .map(recipe -> RecipeDto.fromRecipe(recipe))
                     .toList();
-            
+
             return ResponseEntity.ok(recipeDtos);
         } catch (IllegalArgumentException e) {
             log.error("Invalid recipe label: {}", label);
@@ -263,11 +260,11 @@ public class RecipeController {
             @RequestParam(defaultValue = "10") int limit,
             @AuthenticationPrincipal User currentUser) {
         List<Recipe> recipes = recipeService.getMostLikedRecipes(limit);
-        
+
         List<RecipeDto> recipeDtos = recipes.stream()
                 .map(recipe -> RecipeDto.fromRecipe(recipe, currentUser))
                 .toList();
-        
+
         return ResponseEntity.ok(recipeDtos);
     }
 }

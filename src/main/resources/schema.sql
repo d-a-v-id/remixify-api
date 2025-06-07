@@ -28,7 +28,7 @@ CREATE TABLE ingredients (
 -- Create recipes table
 CREATE TABLE recipes (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     image_path VARCHAR(255) DEFAULT 'uploads/recipes/default-recipe.webp',
     author_id BIGINT NOT NULL,

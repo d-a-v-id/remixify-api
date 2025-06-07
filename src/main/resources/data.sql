@@ -216,4 +216,11 @@ UPDATE recipes SET likes = 1 WHERE id = 12; -- Classic Pancakes
 UPDATE recipes SET likes = 1 WHERE id = 13; -- PB Banana Toast
 UPDATE recipes SET likes = 0 WHERE id = 14; -- Smoothie Bowl
 UPDATE recipes SET likes = 0 WHERE id = 15; -- White Bean Dip
-UPDATE recipes SET likes = 1 WHERE id = 16; -- Yogurt Parfait 
+UPDATE recipes SET likes = 1 WHERE id = 16; -- Yogurt Parfait
+
+-- Reset sequences to avoid duplicate key violations
+-- This ensures that auto-generated IDs start from the correct value
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('ingredients_id_seq', (SELECT MAX(id) FROM ingredients));
+SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
+SELECT setval('recipe_ingredients_id_seq', (SELECT MAX(id) FROM recipe_ingredients)); 

@@ -41,7 +41,7 @@ public class Recipe {
     // 📌 Basic Fields
     // ─────────────────────────────────────────────────────
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Name is required")
