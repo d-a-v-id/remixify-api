@@ -66,7 +66,12 @@ public class ContentBasedRecommendationService implements RecommendationService 
 
         Set<Recipe> userLikes = user.getLikedRecipes();
         if (userLikes.isEmpty()) {
-            return new RecommendationResponse(Collections.emptyList(), new Stats(0, 0, 0));
+            log.info("No liked recipes found for user: {}. Cannot generate recommendations.", username);
+            return new RecommendationResponse(
+                Collections.emptyList(), 
+                new Stats(0, 0, 0),
+                "To get personalized recommendations, please like some recipes first!"
+            );
         }
 
         List<double[]> userVectors = userLikes.stream()
@@ -76,8 +81,12 @@ public class ContentBasedRecommendationService implements RecommendationService 
 
         double[] userProfile = averageVectors(userVectors);
         if (userProfile == null) {
-            log.warn("No valid recipe vectors found for this user. Returning empty recommendations.");
-            return new RecommendationResponse(Collections.emptyList(), new Stats(0, 0, 0));
+            log.warn("No valid recipe vectors found for user: {}. Returning empty recommendations.", username);
+            return new RecommendationResponse(
+                Collections.emptyList(), 
+                new Stats(0, 0, 0),
+                "We're having trouble analyzing your taste preferences. Please try again later."
+            );
         }
 
         Set<String> userLikedIngredients = userLikes.stream()
@@ -91,7 +100,7 @@ public class ContentBasedRecommendationService implements RecommendationService 
                 .map(recipe -> {
                     double[] recipeVector = recipeVectors.get(recipe.getId());
                     double score = recipeVector != null
-                        ? cosine(userProfile, recipeVector)
+                        ? calculateCosineSimilarity(userProfile, recipeVector)
                         : 0.0;
 
                     List<String> commonIngredients = recipe.getRecipeIngredients().stream()
@@ -121,7 +130,10 @@ public class ContentBasedRecommendationService implements RecommendationService 
                 .toList();
 
         Stats stats = computeStats(recommendations);
-        return new RecommendationResponse(recommendations, stats);
+        String explanation = recommendations.isEmpty() 
+            ? "No recipes match your preferences at the moment. Try liking more recipes!"
+            : String.format("Found %d personalized recommendations based on your taste profile.", recommendations.size());
+        return new RecommendationResponse(recommendations, stats, explanation);
     }
 
     private double[] computeVector(Recipe recipe) {
@@ -171,7 +183,7 @@ public class ContentBasedRecommendationService implements RecommendationService 
         return avg;
     }
 
-    private double cosine(double[] a, double[] b) {
+    private double calculateCosineSimilarity(double[] a, double[] b) {
         if (a == null || b == null) {
             return 0.0;
         }

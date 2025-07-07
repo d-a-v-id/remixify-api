@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         log.warn("Invalid credentials: {}", exception.getMessage());
         return buildErrorResponse(
                 HttpStatus.UNAUTHORIZED,
-                "Invalid credentials",
+                "Username or password invalid. Try again.",
                 "Invalid username or password",
                 request);
     }
