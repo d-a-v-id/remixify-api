@@ -49,7 +49,20 @@ VALUES
     (27, 'Vanilla Extract'),
     (28, 'Coconut Milk'),
     (29, 'Spinach'),
-    (30, 'Mixed Greens');
+    (30, 'Mixed Greens'),
+    (31, 'Vegetables'),
+    (32, 'Lemon Juice'),
+    (33, 'Onion'),
+    (34, 'Herbs'),
+    (35, 'Water'),
+    (36, 'Lime Juice'),
+    (37, 'Fruits'),
+    (38, 'Nuts'),
+    (39, 'Seeds'),
+    (40, 'Rosemary'),
+    (41, 'Thyme'),
+    (42, 'Vanilla'),
+    (43, 'Butter');
 
 -- Insert recipes with different categories and difficulties
 INSERT INTO recipes (id, name, description, image_path, cook_time, servings, likes, author_id, difficulty, label, steps)
@@ -119,25 +132,122 @@ VALUES
     (6, 2, 2, 2, 'PIECE'),
     (7, 2, 3, 2, 'PIECE'),
     (8, 2, 15, 1, 'TABLESPOON'),
+    (9, 2, 16, 1, 'PINCH'),
+    (10, 2, 17, 1, 'PINCH'),
 
     -- Banana Pancakes
-    (9, 3, 4, 2, 'PIECE'),
-    (10, 3, 24, 200, 'GRAM'),
-    (11, 3, 25, 2, 'TABLESPOON'),
-    (12, 3, 26, 2, 'TABLESPOON'),
-    (13, 3, 9, 250, 'MILLILITER'),
+    (11, 3, 4, 2, 'PIECE'),
+    (12, 3, 24, 200, 'GRAM'),
+    (13, 3, 25, 2, 'TABLESPOON'),
+    (14, 3, 26, 2, 'TABLESPOON'),
+    (15, 3, 9, 250, 'MILLILITER'),
+    (16, 3, 3, 1, 'PIECE'),
 
     -- Berry Parfait
-    (14, 4, 6, 200, 'GRAM'),
-    (15, 4, 7, 100, 'GRAM'),
-    (16, 4, 23, 50, 'GRAM'),
-    (17, 4, 10, 1, 'TABLESPOON'),
+    (17, 4, 6, 200, 'GRAM'),
+    (18, 4, 7, 100, 'GRAM'),
+    (19, 4, 23, 50, 'GRAM'),
+    (20, 4, 10, 1, 'TABLESPOON'),
 
     -- Berry Smoothie Bowl
-    (18, 5, 7, 150, 'GRAM'),
-    (19, 5, 6, 100, 'GRAM'),
-    (20, 5, 9, 100, 'MILLILITER'),
-    (21, 5, 10, 1, 'TABLESPOON');
+    (21, 5, 7, 150, 'GRAM'),
+    (22, 5, 6, 100, 'GRAM'),
+    (23, 5, 9, 100, 'MILLILITER'),
+    (24, 5, 10, 1, 'TABLESPOON'),
+    (25, 5, 23, 50, 'GRAM'),
+
+    -- Chickpea Salad
+    (26, 6, 11, 400, 'GRAM'),
+    (27, 6, 31, 200, 'GRAM'),
+    (28, 6, 15, 2, 'TABLESPOON'),
+    (29, 6, 32, 2, 'TABLESPOON'),
+    (30, 6, 16, 1, 'PINCH'),
+    (31, 6, 17, 1, 'PINCH'),
+
+    -- Floral Hummus
+    (32, 7, 11, 400, 'GRAM'),
+    (33, 7, 12, 3, 'TABLESPOON'),
+    (34, 7, 32, 2, 'TABLESPOON'),
+    (35, 7, 14, 2, 'PIECE'),
+    (36, 7, 15, 2, 'TABLESPOON'),
+    (37, 7, 16, 1, 'PINCH'),
+    (38, 7, 17, 1, 'PINCH'),
+    (39, 7, 31, 100, 'GRAM'),
+    (40, 7, 2, 4, 'PIECE'),
+
+    -- French Toast
+    (41, 8, 3, 3, 'PIECE'),
+    (42, 8, 9, 150, 'MILLILITER'),
+    (43, 8, 18, 1, 'PINCH'),
+    (44, 8, 42, 1, 'PINCH'),
+    (45, 8, 43, 2, 'TABLESPOON'),
+    (46, 8, 2, 4, 'PIECE'),
+    (47, 8, 19, 3, 'TABLESPOON'),
+
+    -- Lentil Stew
+    (48, 9, 21, 300, 'GRAM'),
+    (49, 9, 15, 2, 'TABLESPOON'),
+    (50, 9, 33, 1, 'PIECE'),
+    (51, 9, 14, 3, 'PIECE'),
+    (52, 9, 35, 1000, 'MILLILITER'),
+    (53, 9, 16, 1, 'PINCH'),
+    (54, 9, 17, 1, 'PINCH'),
+    (55, 9, 34, 2, 'TABLESPOON'),
+
+    -- Mango Avocado Salad
+    (56, 10, 22, 1, 'PIECE'),
+    (57, 10, 1, 1, 'PIECE'),
+    (58, 10, 30, 100, 'GRAM'),
+    (59, 10, 36, 2, 'TABLESPOON'),
+    (60, 10, 15, 1, 'TABLESPOON'),
+
+    -- Overnight Oats
+    (61, 11, 8, 80, 'GRAM'),
+    (62, 11, 9, 150, 'MILLILITER'),
+    (63, 11, 10, 1, 'TABLESPOON'),
+    (64, 11, 7, 50, 'GRAM'),
+
+    -- Classic Pancakes
+    (65, 12, 24, 200, 'GRAM'),
+    (66, 12, 25, 2, 'PINCH'),
+    (67, 12, 26, 2, 'TABLESPOON'),
+    (68, 12, 16, 1, 'PINCH'),
+    (69, 12, 9, 250, 'MILLILITER'),
+    (70, 12, 3, 2, 'PIECE'),
+    (71, 12, 42, 1, 'PINCH'),
+    (72, 12, 19, 3, 'TABLESPOON'),
+
+    -- PB Banana Toast
+    (73, 13, 2, 2, 'PIECE'),
+    (74, 13, 5, 2, 'TABLESPOON'),
+    (75, 13, 4, 1, 'PIECE'),
+    (76, 13, 10, 1, 'TABLESPOON'),
+
+    -- Smoothie Bowl
+    (77, 14, 37, 200, 'GRAM'),
+    (78, 14, 6, 150, 'GRAM'),
+    (79, 14, 9, 100, 'MILLILITER'),
+    (80, 14, 38, 30, 'GRAM'),
+    (81, 14, 39, 20, 'GRAM'),
+    (82, 14, 23, 50, 'GRAM'),
+    (83, 14, 10, 1, 'TABLESPOON'),
+    (84, 14, 19, 1, 'TABLESPOON'),
+
+    -- White Bean Dip
+    (85, 15, 20, 400, 'GRAM'),
+    (86, 15, 14, 2, 'PIECE'),
+    (87, 15, 32, 2, 'TABLESPOON'),
+    (88, 15, 15, 3, 'TABLESPOON'),
+    (89, 15, 16, 1, 'PINCH'),
+    (90, 15, 17, 1, 'PINCH'),
+    (91, 15, 40, 1, 'PINCH'),
+    (92, 15, 41, 1, 'PINCH'),
+
+    -- Yogurt Parfait
+    (93, 16, 37, 150, 'GRAM'),
+    (94, 16, 6, 200, 'GRAM'),
+    (95, 16, 23, 50, 'GRAM'),
+    (96, 16, 10, 1, 'TABLESPOON');
 
 -- Set user preferences (each user has distinct preferences)
 INSERT INTO user_preferred_ingredients (user_id, ingredient_id)
@@ -223,4 +333,25 @@ UPDATE recipes SET likes = 1 WHERE id = 16; -- Yogurt Parfait
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 SELECT setval('ingredients_id_seq', (SELECT MAX(id) FROM ingredients));
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
-SELECT setval('recipe_ingredients_id_seq', (SELECT MAX(id) FROM recipe_ingredients)); 
+SELECT setval('recipe_ingredients_id_seq', (SELECT MAX(id) FROM recipe_ingredients));
+
+-- Verification queries to ensure everything is properly set up
+-- Show ingredient count per recipe
+SELECT
+    r.id,
+    r.name as recipe_name,
+    COUNT(ri.ingredient_id) as ingredient_count
+FROM recipes r
+LEFT JOIN recipe_ingredients ri ON r.id = ri.recipe_id
+GROUP BY r.id, r.name
+ORDER BY r.id;
+
+-- Show ingredient usage statistics
+SELECT
+    i.id,
+    i.name,
+    COUNT(ri.recipe_id) as used_in_recipes
+FROM ingredients i
+LEFT JOIN recipe_ingredients ri ON i.id = ri.ingredient_id
+GROUP BY i.id, i.name
+ORDER BY used_in_recipes DESC, i.name; 
