@@ -2,6 +2,7 @@ package org.dvd.remixifyapi.recommendation;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -35,14 +36,21 @@ public class ContentBasedRecommendationService implements RecommendationService 
 
     private final Map<Long, double[]> recipeVectors = new HashMap<>();
     private Map<String, Integer> ingredientIndexMap = new HashMap<>();
+    private Map<String, Integer> ingredientFrequency = new HashMap<>();
     private int ingredientVectorSize = 0;
+    private int totalRecipes = 0;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initVectors() {
         ingredientIndexMap.clear();
+        ingredientFrequency.clear();
         int index = 0;
 
-        for (Recipe recipe : recipeRepository.findAllWithIngredients()) {
+        List<Recipe> allRecipes = recipeRepository.findAllWithIngredients();
+        totalRecipes = allRecipes.size();
+
+        // Build ingredient index map
+        for (Recipe recipe : allRecipes) {
             for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
                 String ingredientName = ri.getIngredient().getName().toLowerCase().trim();
                 if (!ingredientIndexMap.containsKey(ingredientName)) {
@@ -51,8 +59,21 @@ public class ContentBasedRecommendationService implements RecommendationService 
             }
         }
 
+        // Calculate ingredient frequencies
+        for (Recipe recipe : allRecipes) {
+            Set<String> uniqueIngredients = new HashSet<>();
+            for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
+                String ingredientName = ri.getIngredient().getName().toLowerCase().trim();
+                uniqueIngredients.add(ingredientName);
+            }
+            for (String ingredientName : uniqueIngredients) {
+                ingredientFrequency.put(ingredientName, 
+                    ingredientFrequency.getOrDefault(ingredientName, 0) + 1);
+            }
+        }
+
         ingredientVectorSize = ingredientIndexMap.size();
-        for (Recipe recipe : recipeRepository.findAllWithIngredients()) {
+        for (Recipe recipe : allRecipes) {
             recipeVectors.put(recipe.getId(), computeVector(recipe)); 
         }
     }
@@ -127,7 +148,17 @@ public class ContentBasedRecommendationService implements RecommendationService 
                 })
                 .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
                 .limit(limit)
-                .toList();
+                .collect(Collectors.toList());
+
+
+        recommendations = recommendations.stream()
+            .map(dto -> new RecommendationDto(
+                    dto.getId(),
+                    dto.getTitle(),
+                    (int) Math.round(Math.sqrt(dto.getScore()) * 100),
+                    dto.getCommonIngredients(),
+                    dto.getExplanation()))
+            .collect(Collectors.toList());
 
         Stats stats = computeStats(recommendations);
         String explanation = recommendations.isEmpty() 
@@ -137,13 +168,16 @@ public class ContentBasedRecommendationService implements RecommendationService 
     }
 
     private double[] computeVector(Recipe recipe) {
-        double[] vector = new double[ingredientVectorSize]; // 1 if ingredient present, 0 if not
+        double[] vector = new double[ingredientVectorSize];
         try {
             for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
                 String ingredientName = ri.getIngredient().getName().toLowerCase().trim();
                 Integer i = ingredientIndexMap.get(ingredientName);
                 if (i != null) {
-                    vector[i] = 1.0;
+                    // Apply inverse frequency weighting (TF-IDF)
+                    int frequency = ingredientFrequency.getOrDefault(ingredientName, 1);
+                    double weight = Math.log((double) totalRecipes / frequency);
+                    vector[i] = weight;
                 }
             }
         } catch (Exception e) {
