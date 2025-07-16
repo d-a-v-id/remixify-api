@@ -142,23 +142,30 @@ public class ContentBasedRecommendationService implements RecommendationService 
                     return new RecommendationDto(
                             recipe.getId(),
                             recipe.getName(),
-                            score,
+                            Math.round(score * 100.0) / 100.0,
                             commonIngredients,
                             explanation);
                 })
                 .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
                 .limit(limit)
-                .collect(Collectors.toList());
+                .toList();
 
-
-        recommendations = recommendations.stream()
-            .map(dto -> new RecommendationDto(
-                    dto.getId(),
-                    dto.getTitle(),
-                    (int) Math.round(Math.sqrt(dto.getScore()) * 100),
-                    dto.getCommonIngredients(),
-                    dto.getExplanation()))
-            .collect(Collectors.toList());
+        // Log debug information only for top recommendations
+        if (log.isDebugEnabled()) {
+            log.debug("=== TOP {} RECOMMENDATIONS FOR USER: {} ===", recommendations.size(), username);
+            for (int i = 0; i < recommendations.size(); i++) {
+                RecommendationDto rec = recommendations.get(i);
+                Recipe recipe = recipes.stream()
+                        .filter(r -> r.getId().equals(rec.getId()))
+                        .findFirst()
+                        .orElse(null);
+                if (recipe != null) {
+                    double[] recipeVector = recipeVectors.get(recipe.getId());
+                    log.debug("{}. {}", i + 1, recipe.getName());
+                    logDebugInfo(recipe, userProfile, recipeVector, rec.getScore());
+                }
+            }
+        }
 
         Stats stats = computeStats(recommendations);
         String explanation = recommendations.isEmpty() 
@@ -252,5 +259,59 @@ public class ContentBasedRecommendationService implements RecommendationService 
                 .orElse(0);
 
         return new Stats(max, min, avg);
+    }
+
+    private void logDebugInfo(Recipe recipe, double[] userProfile, double[] recipeVector, double score) {
+        log.debug("  Ingredient weights (TF-IDF):");
+        for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
+            String ingredientName = ri.getIngredient().getName().toLowerCase().trim();
+            int frequency = ingredientFrequency.getOrDefault(ingredientName, 1);
+            double rawWeight = Math.log((double) totalRecipes / frequency);
+            
+            // Get normalized weight from the actual vector
+            Integer index = ingredientIndexMap.get(ingredientName);
+            double normalizedWeight = (index != null && recipeVector != null) ? recipeVector[index] : 0.0;
+            
+            log.debug("    {}: raw={} → normalized={} (appears in {}/{} recipes)", 
+                ingredientName, 
+                String.format("%.4f", rawWeight), 
+                String.format("%.4f", normalizedWeight),
+                frequency, totalRecipes);
+        }
+        
+        // Log vector calculations
+        if (userProfile != null && recipeVector != null) {
+            double userMagnitude = calculateVectorMagnitude(userProfile);
+            double recipeMagnitude = calculateVectorMagnitude(recipeVector);
+            double dotProduct = calculateDotProduct(userProfile, recipeVector);
+            
+            log.debug("  Vector calculations:");
+            log.debug("    User profile magnitude: {}", String.format("%.4f", userMagnitude));
+            log.debug("    Recipe vector magnitude: {}", String.format("%.4f", recipeMagnitude));
+            log.debug("    Dot product: {}", String.format("%.4f", dotProduct));
+            log.debug("    Cosine similarity: {} = {} / ({} * {})", 
+                String.format("%.4f", score), 
+                String.format("%.4f", dotProduct), 
+                String.format("%.4f", userMagnitude), 
+                String.format("%.4f", recipeMagnitude));
+        }
+        
+        log.debug("-------------------");
+    }
+
+    private double calculateVectorMagnitude(double[] vector) {
+        double magnitude = 0.0;
+        for (double value : vector) {
+            magnitude += value * value;
+        }
+        return Math.sqrt(magnitude);
+    }
+
+    private double calculateDotProduct(double[] a, double[] b) {
+        double dot = 0.0;
+        for (int i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+        }
+        return dot;
     }
 }
